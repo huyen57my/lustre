@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "789054230336",
+    "project_id": "lustre-be258",
+    "storage_bucket": "lustre-be258.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789054230336:android:f7ea0056cf6acdec9bb4a5",
+        "android_client_info": {
+          "package_name": "com.danghuuthinh.lustre"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYbrq0iIGej-N19vHZRR9u_eM1KCNSgDQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
