@@ -30,11 +30,9 @@ public class WelcomeActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Ánh xạ
         txtLogin = findViewById(R.id.txt_welcome_sign_in);
         btnStarted = findViewById(R.id.welcome_btn_start);
 
-        // Sự kiện click
         txtLogin.setOnClickListener(v -> {
             startActivity(new Intent(WelcomeActivity.this, SignInActivity.class));
         });

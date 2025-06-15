@@ -14,19 +14,20 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.lustre.R;
 
-public class SignInActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
-    TextView txtSignUp;
-    Button btnLogin;
-
+    EditText edtUsername;
     EditText edtEmail;
     EditText edtPassword;
+
+    Button btnSignUp;
+    TextView txtSignIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_sign_in);
+        setContentView(R.layout.activity_sign_up);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -35,22 +36,17 @@ public class SignInActivity extends AppCompatActivity {
 
         loadComponent();
 
-        txtSignUp.setOnClickListener(v -> {
-            startActivity(new Intent(SignInActivity.this, SignUpActivity.class));
-        });
-
-        btnLogin.setOnClickListener(v -> {
-            startActivity(new Intent(SignInActivity.this, MainActivity.class));
+        txtSignIn.setOnClickListener(v -> {
+            startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
         });
     }
+
     private void loadComponent() {
-        txtSignUp = findViewById(R.id.sign_in_txtSignUp);
-        btnLogin = findViewById(R.id.sign_in_btnLogin);
-        edtEmail = findViewById(R.id.sign_in_txtEmail);
-        edtPassword = findViewById(R.id.sign_in_txtPassword);
+        edtEmail = findViewById(R.id.sign_up_txtEmail);
+        edtUsername = findViewById(R.id.sign_up_edtName);
+        edtPassword = findViewById(R.id.sign_up_txtPassword);
+        btnSignUp = findViewById(R.id.sign_up_btnLogin);
+        txtSignIn = findViewById(R.id.sign_up_txtSignIn);
     }
 
-    private void handleLogin() {
-        startActivity(new Intent(SignInActivity.this, MainActivity.class));
-    }
 }

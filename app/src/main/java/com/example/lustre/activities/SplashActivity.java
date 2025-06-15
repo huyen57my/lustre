@@ -19,11 +19,10 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        // Chờ 2 giây, sau đó chuyển sang MainActivity
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(SplashActivity.this, WelcomeActivity.class);
             startActivity(intent);
-            finish(); // đóng splash activity
-        }, 2000); // 2 giây
+            finish();
+        }, 1500);
     }
 }
