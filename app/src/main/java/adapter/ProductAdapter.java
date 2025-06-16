@@ -100,7 +100,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     .into(ivProductImage);
 
             // Set heart icon
-            btnLove.setImageResource(product.isFavorite() ? R.drawable.heart : R.drawable.heart);
+            btnLove.setImageResource(product.isFavorite() ? R.drawable.heart_fill : R.drawable.heart);
 
             // Handle click events
             itemView.setOnClickListener(v -> {

@@ -1,13 +1,100 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fragments.WishlistFragment">
+    android:orientation="vertical"
+    android:background="@color/white">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- Fixed AppBar -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="wishlist fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white">
 
-</FrameLayout>
+        <include layout="@layout/app_bar"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingRight="20dp"
+            android:orientation="horizontal">
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_all"
+                android:layout_width="70dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="5dp"
+                android:textColor="@color/button_text_selector"
+                android:background="@drawable/button_background_selector"
+                android:text="All"/>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_shirt"
+                android:layout_marginRight="5dp"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:textColor="@color/button_text_selector"
+                android:background="@drawable/button_background_selector"
+                android:text="Shirt"/>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_pant"
+                android:layout_width="80dp"
+                android:layout_marginRight="4dp"
+                android:textColor="@color/button_text_selector"
+                android:background="@drawable/button_background_selector"
+                android:layout_height="40dp"
+                android:text="Pant"/>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_dress"
+                android:layout_width="100dp"
+                android:textColor="@color/button_text_selector"
+                android:background="@drawable/button_background_selector"
+                android:layout_height="40dp"
+                android:text="Dress"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Scrollable Products Content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp">
+
+            <!-- Products Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/wishlist_product"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@layout/product_card" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

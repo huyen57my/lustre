@@ -64,6 +64,7 @@ public class ProductDataManager {
         product3.setSale(null);
         product3.setSizes(Arrays.asList("S", "M", "L", "XL"));
         product3.setStock(8);
+        product3.setFavorite(true);
         products.add(product3);
 
         // Product 4: Váy hoa mùa hè

@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -173,7 +174,6 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         });
         */
     }
-
     // Product click callbacks
     @Override
     public void onProductClick(Product product) {
@@ -189,5 +189,4 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         // TODO: Update Firebase or local storage
     }
-
 }
