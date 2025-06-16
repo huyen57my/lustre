@@ -42,8 +42,10 @@ public class WishlistFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setAppBarTitle("My Wishlist");
-        setupProductsRecyclerView(view);
+        TextView tvTitle = view.findViewById(R.id.tv_title);
+        if (tvTitle != null) {
+            tvTitle.setText("Wishlist");
+        }        setupProductsRecyclerView(view);
         setupFilterButtons(view);
         loadProducts();
     }
@@ -81,17 +83,6 @@ public class WishlistFragment extends Fragment {
 
         btnAll.setSelected(true);
     }
-
-
-    private void setAppBarTitle(String title) {
-        if (getActivity() == null) return;
-
-        TextView tvTitle = getActivity().findViewById(R.id.tv_title);
-        if (tvTitle != null) {
-            tvTitle.setText(title);
-        }
-    }
-
     private void setupProductsRecyclerView(View view) {
         recyclerViewProducts = view.findViewById(R.id.wishlist_product);
 

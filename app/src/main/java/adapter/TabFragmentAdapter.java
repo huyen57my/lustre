@@ -8,6 +8,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import fragments.CartFragment;
 import fragments.HomeFragment;
 import fragments.ProfileFragment;
+import fragments.VoucherFragment;
 import fragments.WishlistFragment;
 
 public class TabFragmentAdapter extends FragmentStateAdapter {
@@ -27,6 +28,8 @@ public class TabFragmentAdapter extends FragmentStateAdapter {
             case 2:
                 return new WishlistFragment();
             case 3:
+                return new VoucherFragment();
+            case 4:
                 return new ProfileFragment();
             default:
                 return new HomeFragment();
@@ -35,6 +38,6 @@ public class TabFragmentAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 4;
+        return 5;
     }
 }

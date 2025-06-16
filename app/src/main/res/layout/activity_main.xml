@@ -112,7 +112,31 @@
                 android:background="@drawable/active_indicator"
                 android:visibility="invisible" />
         </FrameLayout>
+        <FrameLayout
+            android:id="@+id/tab_voucher"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/tab_background_inactive"
+            android:clickable="true"
+            android:focusable="true">
 
+            <ImageView
+                android:id="@+id/icon_voucher"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                app:tint="@color/tab_icon_tint"
+                android:layout_gravity="center"
+                android:src="@drawable/voucher"/>
+
+            <View
+                android:id="@+id/indicator_voucher"
+                android:layout_width="4dp"
+                android:layout_height="4dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/active_indicator"
+                android:visibility="invisible" />
+        </FrameLayout>
         <!-- Profile Tab -->
         <FrameLayout
             android:id="@+id/tab_profile"

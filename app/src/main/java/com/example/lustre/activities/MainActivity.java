@@ -24,8 +24,8 @@ import com.example.lustre.adapters.TabFragmentAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FrameLayout tabHome, tabCart, tabHeart, tabProfile;
-    private ImageView iconHome, iconCart, iconHeart, iconProfile;
+    private FrameLayout tabHome, tabCart, tabHeart, tabProfile, tabVoucher;
+    private ImageView iconHome, iconCart, iconHeart, iconProfile, iconVoucher;
     private ViewPager2 viewPager;
     private TabFragmentAdapter adapter;
     private boolean isUserSwiping = false;
@@ -55,8 +55,12 @@ public class MainActivity extends AppCompatActivity {
             viewPager.setCurrentItem(2, true);
             selectTab(tabHeart);
         });
-        tabProfile.setOnClickListener(view -> {
+        tabVoucher.setOnClickListener(view -> {
             viewPager.setCurrentItem(3, true);
+            selectTab(tabVoucher);
+        });
+        tabProfile.setOnClickListener(view -> {
+            viewPager.setCurrentItem(4, true);
             selectTab(tabProfile);
         });
 
@@ -68,12 +72,14 @@ public class MainActivity extends AppCompatActivity {
         tabCart = findViewById(R.id.tab_cart);
         tabHeart = findViewById(R.id.tab_heart);
         tabProfile = findViewById(R.id.tab_profile);
+        tabVoucher = findViewById(R.id.tab_voucher);
 
         // Get ImageViews inside each tab
         iconHome = tabHome.findViewById(R.id.icon_home);
         iconCart = tabCart.findViewById(R.id.icon_cart);
         iconHeart = tabHeart.findViewById(R.id.icon_heart);
         iconProfile = tabProfile.findViewById(R.id.icon_profile);
+        iconVoucher = tabVoucher.findViewById(R.id.icon_voucher);
 
         // Setup ViewPager2
         viewPager = findViewById(R.id.viewPager);
@@ -102,9 +108,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void resetTab() {
-        int[] tabIds = {R.id.tab_home, R.id.tab_cart, R.id.tab_heart, R.id.tab_profile};
-        int[] indicatorIds = {R.id.indicator_home, R.id.indicator_cart, R.id.indicator_heart, R.id.indicator_profile};
-        ImageView[] icons = {iconHome, iconCart, iconHeart, iconProfile};
+        int[] tabIds = {R.id.tab_home, R.id.tab_cart, R.id.tab_heart, R.id.tab_voucher, R.id.tab_profile};
+        int[] indicatorIds = {R.id.indicator_home, R.id.indicator_cart, R.id.indicator_heart, R.id.indicator_voucher ,R.id.indicator_profile};
+        ImageView[] icons = {iconHome, iconCart, iconHeart, iconVoucher, iconProfile};
 
         // Get inactive color
         int inactiveColor = ContextCompat.getColor(this, android.R.color.white);
@@ -148,6 +154,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (selectedId == R.id.tab_profile) {
             indicator = findViewById(R.id.indicator_profile);
             selectedIcon = iconProfile;
+        } else if (selectedId == R.id.tab_voucher) {
+            indicator = findViewById(R.id.indicator_voucher);
+            selectedIcon = iconVoucher;
         }
 
         if (indicator != null) {
@@ -217,7 +226,10 @@ public class MainActivity extends AppCompatActivity {
             case 2:
                 selectedTab = tabHeart;
                 break;
-            case 3:
+            case 3 :
+                selectedTab = tabVoucher;
+                break;
+            case 4:
                 selectedTab = tabProfile;
                 break;
         }
