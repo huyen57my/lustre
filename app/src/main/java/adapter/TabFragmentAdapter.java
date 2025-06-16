@@ -1,4 +1,4 @@
-package com.example.lustre.adapters;
+package adapter;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

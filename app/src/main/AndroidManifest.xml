@@ -24,6 +24,11 @@
         <activity
             android:name=".activities.WelcomeActivity"
             android:exported="false" />
+        <activity android:name=".activities.PaymentMethodActivity" />
+        <activity android:name=".activities.HelpCenterActivity" />
+        <activity android:name=".activities.SettingsActivity" />
+        <activity android:name=".activities.PrivacyPolicyActivity" />
+        <activity android:name=".activities.PasswordManagerActivity" />
         <activity
             android:name=".activities.SplashActivity"
             android:exported="true">

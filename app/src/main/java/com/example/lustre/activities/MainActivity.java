@@ -20,7 +20,8 @@ import androidx.core.widget.ImageViewCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.lustre.R;
-import com.example.lustre.adapters.TabFragmentAdapter;
+
+import adapter.TabFragmentAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
