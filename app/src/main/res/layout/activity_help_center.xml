@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#FFFFFF"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/ic_back" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Help Center"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#1C1C1E"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
+
+    <EditText
+        android:id="@+id/etSearch"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:hint="Search"
+        android:paddingHorizontal="16dp"
+        android:drawablePadding="10dp"
+        android:textColor="#000000"
+        android:textColorHint="#999999" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center"
+        android:background="#FFFFFF">
+
+        <LinearLayout
+            android:id="@+id/layoutFAQ"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btnFAQ"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="FAQ"
+                android:background="@android:color/transparent"
+                android:textColor="#7A5C3B"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginEnd="8dp" />
+
+            <View
+                android:id="@+id/underlineFAQ"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#7A5C3B"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutContactUs"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btnContactUs"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Contact Us"
+                android:background="@android:color/transparent"
+                android:textColor="#999999"
+                android:textStyle="normal"
+                android:textSize="16sp"
+                android:layout_marginStart="8dp" />
+
+            <View
+                android:id="@+id/underlineContactUs"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#7A5C3B"
+                android:visibility="invisible" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="8dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:background="#FFFFFF"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <Button
+                android:id="@+id/btnAll"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:paddingHorizontal="16dp"
+                android:maxWidth="100dp"
+                android:text="All"
+                android:textSize="14sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#7A5C3B" />
+
+            <Button
+                android:id="@+id/btnServices"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:paddingHorizontal="16dp"
+                android:maxWidth="100dp"
+                android:text="Services"
+                android:textSize="14sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#7A5C3B" />
+
+            <Button
+                android:id="@+id/btnGeneral"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:paddingHorizontal="16dp"
+                android:maxWidth="100dp"
+                android:text="General"
+                android:textSize="14sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#7A5C3B" />
+
+            <Button
+                android:id="@+id/btnAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:paddingHorizontal="16dp"
+                android:maxWidth="100dp"
+                android:text="Account"
+                android:textSize="14sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#7A5C3B" />
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewFAQ"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="16dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewContact"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="16dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:visibility="gone"/>
+
+</LinearLayout>
