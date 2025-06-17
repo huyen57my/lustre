@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
+    <meta-data
+        android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
+        android:value="false" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -15,10 +17,13 @@
         android:theme="@style/Theme.Lustre"
         tools:targetApi="31">
         <activity
+            android:name=".activities.ProductDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.SearchActivity"
             android:exported="false"
             android:launchMode="standard"
-            android:windowSoftInputMode="adjustResize|stateVisible"/>
+            android:windowSoftInputMode="adjustResize|stateVisible" />
         <activity
             android:name=".activities.CreateProfileActivity"
             android:exported="false" />

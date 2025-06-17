@@ -64,9 +64,9 @@ public class FilterActivity extends AppCompatActivity {
 
         // Category selection
         btnAllCategory.setOnClickListener(v -> selectCategory(null, btnAllCategory));
-        btnTShirt.setOnClickListener(v -> selectCategory("T-Shirt", btnTShirt));
-        btnPant.setOnClickListener(v -> selectCategory("Pant", btnPant));
-        btnDress.setOnClickListener(v -> selectCategory("Dress", btnDress));
+        btnTShirt.setOnClickListener(v -> selectCategory("shirt", btnTShirt));
+        btnPant.setOnClickListener(v -> selectCategory("pant", btnPant));
+        btnDress.setOnClickListener(v -> selectCategory("dress", btnDress));
 
         // Price range slider
         priceRangeSlider.addOnChangeListener((slider, value, fromUser) -> {
@@ -115,25 +115,23 @@ public class FilterActivity extends AppCompatActivity {
     }
 
     private void updateCategorySelection() {
-        // Reset all buttons
         for (Button button : categoryButtons) {
             button.setSelected(false);
             button.setBackgroundTintList(null);
         }
 
-        // Highlight selected button
         Button selectedButton = null;
         if (selectedCategory == null) {
             selectedButton = btnAllCategory;
         } else {
             switch (selectedCategory) {
-                case "T-Shirt":
+                case "shirt":
                     selectedButton = btnTShirt;
                     break;
-                case "Pant":
+                case "pant":
                     selectedButton = btnPant;
                     break;
-                case "Dress":
+                case "dress":
                     selectedButton = btnDress;
                     break;
             }

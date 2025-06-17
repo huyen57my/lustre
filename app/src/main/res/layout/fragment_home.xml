@@ -40,13 +40,13 @@
                     android:paddingRight="30dp" />
 
                 <ImageButton
-                    android:id="@+id/btnFilter"
+                    android:id="@+id/btnSearch"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginStart="16dp"
                     android:background="@drawable/rounded_button"
                     android:backgroundTint="@null"
-                    android:src="@drawable/filter"
+                    android:src="@drawable/search"
                     android:text="" />
 
             </LinearLayout>

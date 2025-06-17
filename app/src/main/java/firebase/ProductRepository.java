@@ -108,4 +108,22 @@ public class ProductRepository {
         normalized = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
         return normalized.toLowerCase().trim();
     }
+
+    public void getProductById(String id, OnSuccessListener<Product> onSuccess, OnFailureListener onFailure) {
+        productsRef.document(id).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Product product = documentSnapshot.toObject(Product.class);
+                        if (product != null) {
+                            product.setDocumentSnapshot(documentSnapshot);
+                            onSuccess.onSuccess(product);
+                        } else {
+                            onFailure.onFailure(new Exception("Product is null"));
+                        }
+                    } else {
+                        onFailure.onFailure(new Exception("Product not found"));
+                    }
+                })
+                .addOnFailureListener(onFailure);
+    }
 }

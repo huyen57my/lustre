@@ -22,6 +22,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.lustre.R;
 import com.example.lustre.activities.FilterActivity;
+import com.example.lustre.activities.ProductDetailActivity;
 import com.example.lustre.activities.SearchActivity;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -42,7 +43,7 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
     private Handler handler = new Handler();
     private Runnable autoSlideRunnable;
     private EditText edtSearchKeyword;
-    private ImageButton btnFilter;
+    private ImageButton btnSearch;
     private ViewPager2 bannerViewPager;
     private TabLayout tabLayout;
     private ImageView btnShirt, btnPant, btnDress;
@@ -79,7 +80,7 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
     private void initViews(View view) {
         // Search and Filter
         edtSearchKeyword = view.findViewById(R.id.edtSearchKeyword);
-        btnFilter = view.findViewById(R.id.btnFilter);
+        btnSearch = view.findViewById(R.id.btnSearch);
 
         // Banner
         bannerViewPager = view.findViewById(R.id.bannerViewPager);
@@ -118,7 +119,10 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         });
 
         // Handle filter button click
-        btnFilter.setOnClickListener(v -> navigateToFilter());
+        btnSearch.setOnClickListener(v -> {
+            String keyword = edtSearchKeyword.getText().toString().trim();
+            navigateToSearch(keyword);
+        });
     }
 
 
@@ -261,9 +265,10 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
     }
     @Override
     public void onProductClick(Product product) {
-        Toast.makeText(getContext(), "Clicked: " + product.getName(), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getContext(), ProductDetailActivity.class);
+        intent.putExtra("product_id", product.getId());
+        startActivity(intent);
     }
-
     @Override
     public void onFavoriteClick(Product product, int position) {
         String message = product.isFavorite() ? "Added to favorites" : "Removed from favorites";
