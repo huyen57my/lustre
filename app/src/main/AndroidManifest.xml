@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,6 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Lustre"
         tools:targetApi="31">
+        <activity
+            android:name=".activities.SearchActivity"
+            android:exported="false"
+            android:launchMode="standard"
+            android:windowSoftInputMode="adjustResize|stateVisible"/>
         <activity
             android:name=".activities.CreateProfileActivity"
             android:exported="false" />
@@ -29,6 +36,7 @@
         <activity android:name=".activities.SettingsActivity" />
         <activity android:name=".activities.PrivacyPolicyActivity" />
         <activity android:name=".activities.PasswordManagerActivity" />
+        <activity android:name=".activities.FilterActivity" />
         <activity
             android:name=".activities.SplashActivity"
             android:exported="true">

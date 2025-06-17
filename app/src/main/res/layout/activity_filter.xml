@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    tools:context=".activities.FilterActivity">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:background="@android:color/white"
+        android:elevation="4dp">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Filter"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:gravity="center" />
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Category Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Category"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnAllCategory"
+                    android:layout_width="70dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="5dp"
+                    android:textColor="@color/button_text_selector"
+                    android:background="@drawable/button_background_selector"
+                    android:text="All"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnTShirt"
+                    android:layout_marginRight="5dp"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:textColor="@color/button_text_selector"
+                    android:background="@drawable/button_background_selector"
+                    android:text="Shirt"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnPant"
+                    android:layout_width="80dp"
+                    android:layout_marginRight="4dp"
+                    android:textColor="@color/button_text_selector"
+                    android:background="@drawable/button_background_selector"
+                    android:layout_height="40dp"
+                    android:text="Pant"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnDress"
+                    android:layout_width="100dp"
+                    android:textColor="@color/button_text_selector"
+                    android:background="@drawable/button_background_selector"
+                    android:layout_height="40dp"
+                    android:text="Dress"/>
+            </LinearLayout>
+            <!-- Pricing Range Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pricing Range"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="12dp" />
+
+            <com.google.android.material.slider.RangeSlider
+                android:id="@+id/priceRangeSlider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:valueFrom="0"
+                android:valueTo="10000000"
+                android:stepSize="0"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                app:trackHeight="4dp"
+                android:thumb="@drawable/custom_thumb"
+                app:trackColorInactive="@color/gray"
+                app:trackColorActive="@color/primary"
+                app:thumbColor="@color/primary"
+                app:haloColor="@android:color/transparent"
+                app:tickColorActive="@android:color/transparent"
+                app:tickColorInactive="@android:color/transparent"
+            />
+
+
+            <!-- Price Labels Layout -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:id="@+id/tvMinPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black"
+                    android:gravity="start" />
+
+                <TextView
+                    android:id="@+id/tvMaxPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black"
+                    android:gravity="end" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Bottom Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp"
+        android:background="@android:color/white"
+        android:elevation="4dp">
+
+        <Button
+            android:id="@+id/btnResetFilter"
+            android:background="@drawable/button_background_selector"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_marginRight="8dp"
+            android:textColor="@color/black"
+            android:text="Reset Filter"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnApplyFilter"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"
+            android:text="Apply"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:backgroundTint="@color/primary" />
+
+    </LinearLayout>
+
+</LinearLayout>

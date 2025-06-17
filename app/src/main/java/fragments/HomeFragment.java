@@ -1,11 +1,16 @@
 package fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,8 +21,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.lustre.R;
+import com.example.lustre.activities.FilterActivity;
+import com.example.lustre.activities.SearchActivity;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,35 +34,117 @@ import java.util.List;
 import adapter.BannerApdater;
 import adapter.ProductAdapter;
 import customizes.SpacingItemDecoration;
+import firebase.ProductRepository;
 import models.Product;
-import models.Product;
-import models.ProductDataManager;
 
 public class HomeFragment extends Fragment implements ProductAdapter.OnProductClickListener {
 
     private Handler handler = new Handler();
     private Runnable autoSlideRunnable;
+    private EditText edtSearchKeyword;
+    private ImageButton btnFilter;
+    private ViewPager2 bannerViewPager;
+    private TabLayout tabLayout;
+    private ImageView btnShirt, btnPant, btnDress;
     private RecyclerView recyclerViewProducts;
+
     private ProductAdapter productAdapter;
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
+    private DocumentSnapshot lastVisibleDoc = null;
+    private final int PAGE_SIZE = 10;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        initViews(view);
+        setupSearchAndFilter();
+        setupCategoryClicks();
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Setup banner ViewPager (existing code)
         setupBanner(view);
-
-        // Setup products RecyclerView
         setupProductsRecyclerView(view);
-
-        // Load products data
         loadProducts();
+    }
+
+    private void initViews(View view) {
+        // Search and Filter
+        edtSearchKeyword = view.findViewById(R.id.edtSearchKeyword);
+        btnFilter = view.findViewById(R.id.btnFilter);
+
+        // Banner
+        bannerViewPager = view.findViewById(R.id.bannerViewPager);
+        tabLayout = view.findViewById(R.id.tabLayout);
+
+        // Categories
+        btnShirt = view.findViewById(R.id.home_btn_Shirt);
+        btnPant = view.findViewById(R.id.home_btn_Pant);
+        btnDress = view.findViewById(R.id.home_btn_dress);
+
+        // Products
+        recyclerViewProducts = view.findViewById(R.id.recyclerViewProducts);
+    }
+
+    private void setupSearchAndFilter() {
+        // Handle search action when user presses enter
+        edtSearchKeyword.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+
+                String searchKeyword = edtSearchKeyword.getText().toString().trim();
+                if (!searchKeyword.isEmpty()) {
+                    navigateToSearch(searchKeyword);
+                } else {
+                    navigateToSearch("");
+                }
+                return true;
+            }
+            return false;
+        });
+
+        // Handle search text click - navigate to search activity
+        edtSearchKeyword.setOnClickListener(v -> {
+            String searchKeyword = edtSearchKeyword.getText().toString().trim();
+            navigateToSearch(searchKeyword);
+        });
+
+        // Handle filter button click
+        btnFilter.setOnClickListener(v -> navigateToFilter());
+    }
+
+
+    private void setupCategoryClicks() {
+        btnShirt.setOnClickListener(v -> navigateToSearchWithCategory("T-Shirt"));
+        btnPant.setOnClickListener(v -> navigateToSearchWithCategory("Pant"));
+        btnDress.setOnClickListener(v -> navigateToSearchWithCategory("Dress"));
+    }
+
+    private void navigateToSearch(String searchKeyword) {
+        Intent intent = new Intent(getActivity(), SearchActivity.class);
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            intent.putExtra("search_keyword", searchKeyword);
+        }
+        startActivity(intent);
+    }
+
+    private void navigateToSearchWithCategory(String category) {
+        Intent intent = new Intent(getActivity(), SearchActivity.class);
+        intent.putExtra("category", category);
+        startActivity(intent);
+    }
+
+    private void navigateToFilter() {
+        Intent intent = new Intent(getActivity(), FilterActivity.class);
+        startActivity(intent);
     }
 
     private void setupBanner(View view) {
@@ -62,11 +152,9 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         TabLayout tabLayout = view.findViewById(R.id.tabLayout);
 
         List<String> imageUrls = Arrays.asList(
-                "https://i-giaitri.vnecdn.net/2025/05/20/doramon-1747738160-1747738183-2577-6717-1747739217.jpg",
-                "https://i-giaitri.vnecdn.net/2025/05/20/doramon-1747738160-1747738183-2577-6717-1747739217.jpg",
-                "https://i-giaitri.vnecdn.net/2025/05/20/doramon-1747738160-1747738183-2577-6717-1747739217.jpg",
-                "https://i-giaitri.vnecdn.net/2025/05/20/doramon-1747738160-1747738183-2577-6717-1747739217.jpg",
-                "https://i-giaitri.vnecdn.net/2025/05/20/doramon-1747738160-1747738183-2577-6717-1747739217.jpg"
+                "https://i-giaitri.vnecdn.net/2025/05/20/doramon-1747738160.jpg",
+                "https://i-giaitri.vnecdn.net/2025/05/20/doramon-1747738183.jpg",
+                "https://i-giaitri.vnecdn.net/2025/05/20/doramon-1747739217.jpg"
         );
 
         BannerApdater adapter = new BannerApdater(requireContext(), imageUrls);
@@ -102,7 +190,6 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
             public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        //auto slide
         autoSlideRunnable = new Runnable() {
             @Override
             public void run() {
@@ -117,76 +204,69 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
     private void setupProductsRecyclerView(View view) {
         recyclerViewProducts = view.findViewById(R.id.recyclerViewProducts);
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-        recyclerViewProducts.setLayoutManager(gridLayoutManager);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+        recyclerViewProducts.setLayoutManager(layoutManager);
 
-        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_spacing); // e.g., 16dp
-        recyclerViewProducts.addItemDecoration(new SpacingItemDecoration(2, spacingInPixels, true));
+        int spacing = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
+        recyclerViewProducts.addItemDecoration(new SpacingItemDecoration(2, spacing, true));
 
         productAdapter = new ProductAdapter(getContext(), new ArrayList<>());
         productAdapter.setOnProductClickListener(this);
         recyclerViewProducts.setAdapter(productAdapter);
+
+        recyclerViewProducts.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (!isLoading && !isLastPage && !recyclerView.canScrollVertically(1)) {
+                    loadProducts();
+                }
+            }
+        });
     }
 
     private void loadProducts() {
-        // Option 1: Sử dụng mock data (hiện tại)
-        ProductDataManager.fetchProductsFromFirebase(new ProductDataManager.ProductDataCallback() {
-            @Override
-            public void onSuccess(List<Product> products) {
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
-                        productAdapter.updateData(products);
-                    });
-                }
-            }
+        if (isLoading || isLastPage) return;
+        isLoading = true;
 
-            @Override
-            public void onError(String error) {
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
-                        Toast.makeText(getContext(), "Lỗi tải sản phẩm: " + error, Toast.LENGTH_SHORT).show();
-                    });
-                }
-            }
-        });
+        new ProductRepository().getSaleProducts(PAGE_SIZE, lastVisibleDoc,
+                products -> {
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() -> {
+                            if (products.size() < PAGE_SIZE) {
+                                isLastPage = true; // Không còn dữ liệu
+                            }
 
-        // Option 2: Sử dụng Firebase Service (uncomment khi ready)
-        /*
-        FirebaseProductService firebaseService = new FirebaseProductService();
-        firebaseService.fetchSaleProducts(new ProductDataManager.ProductDataCallback() {
-            @Override
-            public void onSuccess(List<Product> products) {
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
-                        productAdapter.updateData(products);
-                    });
-                }
-            }
+                            if (!products.isEmpty()) {
+                                lastVisibleDoc = products.get(products.size() - 1).getDocumentSnapshot();
+                                List<Product> current = new ArrayList<>(productAdapter.getProducts());
+                                current.addAll(products);
+                                productAdapter.updateData(current);
+                            }
 
-            @Override
-            public void onError(String error) {
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
-                        Toast.makeText(getContext(), "Lỗi tải sản phẩm: " + error, Toast.LENGTH_SHORT).show();
-                    });
+                            isLoading = false;
+                        });
+                    }
+                },
+                error -> {
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(), "Lỗi tải sản phẩm: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                            isLoading = false;
+                        });
+                    }
                 }
-            }
-        });
-        */
+        );
     }
-    // Product click callbacks
     @Override
     public void onProductClick(Product product) {
-        // Navigate to product detail
         Toast.makeText(getContext(), "Clicked: " + product.getName(), Toast.LENGTH_SHORT).show();
-        // TODO: Navigate to ProductDetailFragment
     }
 
     @Override
     public void onFavoriteClick(Product product, int position) {
-        // Handle favorite toggle
         String message = product.isFavorite() ? "Added to favorites" : "Removed from favorites";
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-        // TODO: Update Firebase or local storage
     }
 }

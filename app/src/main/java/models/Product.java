@@ -1,5 +1,8 @@
 package models;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Exclude;
+
 import java.util.List;
 
 public class Product {
@@ -196,6 +199,19 @@ public class Product {
             return "pant";
         }
         return "other";
+    }
+
+    @Exclude
+    private DocumentSnapshot documentSnapshot;
+
+    @Exclude
+    public DocumentSnapshot getDocumentSnapshot() {
+        return documentSnapshot;
+    }
+
+    @Exclude
+    public void setDocumentSnapshot(DocumentSnapshot documentSnapshot) {
+        this.documentSnapshot = documentSnapshot;
     }
 
 }

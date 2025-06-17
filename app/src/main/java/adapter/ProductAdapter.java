@@ -27,6 +27,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private List<Product> productList;
     private OnProductClickListener listener;
 
+    public List<Product> getProducts() {
+        return productList;
+    }
+
     public interface OnProductClickListener {
         void onProductClick(Product product);
         void onFavoriteClick(Product product, int position);
@@ -91,14 +95,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             tvProductPrice.setText(product.getFormattedPrice());
 
             // Load image
-            Glide.with(context)
-                    .load(product.getImageUrl())
-                    .apply(new RequestOptions()
-                            .transform(new RoundedCorners(16))
-                            .placeholder(R.drawable.ic_logo)
-                            .error(R.drawable.ic_logo))
-                    .into(ivProductImage);
-
+            List<String> imageUrls = product.getImageUrl();
+            if (imageUrls != null && !imageUrls.isEmpty()) {
+                Glide.with(context)
+                        .load(imageUrls.get(0))
+                        .apply(new RequestOptions()
+                                .transform(new RoundedCorners(16))
+                                .placeholder(R.drawable.ic_logo)
+                                .error(R.drawable.ic_logo))
+                        .into(ivProductImage);
+            }
             // Set heart icon
             btnLove.setImageResource(product.isFavorite() ? R.drawable.heart_fill : R.drawable.heart);
 
