@@ -3,9 +3,10 @@ package models;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Product {
+public class Product implements Serializable {
     private String id;
     private String name;
     private String description;

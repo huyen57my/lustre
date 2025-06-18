@@ -1,0 +1,43 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Danh sách lựa chọn chiếm hết phần trên -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <RadioGroup
+            android:id="@+id/radioGroupShipping"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/rbTietKiem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiết kiệm (Giao sau 3-5 ngày)" />
+
+            <RadioButton
+                android:id="@+id/rbHoaToc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hỏa tốc (Giao trong ngày)" />
+
+        </RadioGroup>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnApplyShipping"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Apply"
+        android:backgroundTint="@color/primary"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp" />
+</LinearLayout>

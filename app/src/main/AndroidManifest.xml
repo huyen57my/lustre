@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <meta-data
         android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
         android:value="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
         android:allowBackup="true"
@@ -17,8 +21,15 @@
         android:theme="@style/Theme.Lustre"
         tools:targetApi="31">
         <activity
+            android:name=".activities.ChooseAddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ChooseShippingActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.ProductDetailActivity"
             android:exported="false" />
+        <activity android:name=".activities.CheckoutActivity" />
         <activity
             android:name=".activities.SearchActivity"
             android:exported="false"

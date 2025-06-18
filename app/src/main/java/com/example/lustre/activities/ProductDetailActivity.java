@@ -1,5 +1,6 @@
 package com.example.lustre.activities;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -22,18 +23,23 @@ import java.text.DecimalFormat;
 
 import adapter.ProductImageAdapter;
 import adapter.ThumbnailAdapter;
+import firebase.CartRepository;
 import firebase.ProductRepository;
+import models.CartItem;
 
 public class ProductDetailActivity extends AppCompatActivity {
 
     private TextView tvProductName, tvProductDescription, tvMaterial, tvCare, tvOriginalPrice, tvSalePrice;
     private ImageButton btnBack, btnFavorite;
+    private Button btnAddToCart;
     private LinearLayout layoutSizes, layoutColors;
     private ViewPager2 viewPagerMainImage;
     private androidx.recyclerview.widget.RecyclerView rvProductImages;
 
     private ProductRepository productRepository;
     private String productId;
+    private TextView selectedSizeView = null;
+    private String selectedSize = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_product_detail);
 
         productRepository = new ProductRepository();
+        CartRepository cartRepository = new CartRepository();
 
         productId = getIntent().getStringExtra("product_id");
         if (productId == null) {
@@ -65,11 +72,32 @@ public class ProductDetailActivity extends AppCompatActivity {
                 // TODO: Thêm logic yêu thích ở đây nếu cần
             }
         });
+        btnAddToCart.setOnClickListener(v -> {
+            if (selectedSize == null) {
+                Toast.makeText(this, "Please select a size!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+            String userId = prefs.getString("user_id", null);
+
+            if (userId == null) {
+                Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            CartItem item = new CartItem(productId, 1, selectedSize); // quantity default = 1
+            cartRepository.addToCart(userId, item);
+
+            Toast.makeText(this, "Added to cart!", Toast.LENGTH_SHORT).show();
+        });
+
     }
 
     private void initViews() {
         btnBack = findViewById(R.id.btnBack);
         btnFavorite = findViewById(R.id.btnFavorite);
+        btnAddToCart= findViewById(R.id.btnAddToCart);
         tvProductName = findViewById(R.id.tvProductName);
         tvProductDescription = findViewById(R.id.tvProductDescription);
         tvOriginalPrice = findViewById(R.id.tvOriginalPrice);
@@ -131,10 +159,22 @@ public class ProductDetailActivity extends AppCompatActivity {
                         sizeView.setPadding(24, 12, 24, 12);
                         sizeView.setBackgroundResource(R.drawable.button_background_selector);
                         sizeView.setTextColor(Color.BLACK);
+                        sizeView.setTextSize(14);
+
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                         params.setMargins(8, 0, 8, 0);
                         layoutSizes.addView(sizeView, params);
+
+                        // Click listener
+                        sizeView.setOnClickListener(v -> {
+                            if (selectedSizeView != null) {
+                                selectedSizeView.setSelected(false); // reset previous
+                            }
+                            sizeView.setSelected(true); // set new selected
+                            selectedSizeView = sizeView;
+                            selectedSize = size; // update selected size
+                        });
                     }
 
                     // Color

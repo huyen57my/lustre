@@ -13,6 +13,8 @@ firebase-bom = "33.1.0"
 firebase-auth = "22.3.1"
 firebase-firestore = "24.10.3"
 firebase-storage = "21.3.0"
+swiperefreshlayout = "1.1.0"
+recyclerview = "1.4.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -28,6 +30,8 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebase-auth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebase-firestore" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebase-storage" }
+swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

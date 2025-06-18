@@ -93,18 +93,17 @@
                 android:id="@+id/textView9"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
-                android:text="Name"
+                android:text="Phone"
                 android:textSize="18dp" />
 
             <EditText
-                android:id="@+id/onboard_edtName"
+                android:id="@+id/onboard_edtPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edittext_rounded_border"
                 android:hint="Your name"
                 android:inputType="textEmailAddress"
                 android:paddingLeft="20dp"
-                android:enabled="false"
                 android:paddingRight="20dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray" />

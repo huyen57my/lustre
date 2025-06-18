@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/checkoutBottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="6dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/edtPromoCode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Promo Code"
+            android:background="@android:color/transparent"
+            android:padding="10dp"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/btnApply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apply"
+            android:textSize="14sp"
+            android:backgroundTint="#795548"
+            android:textColor="#FFFFFF"
+            android:layout_marginStart="8dp"
+            android:paddingHorizontal="16dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtSubtotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtDeliveryFee"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtDiscount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"
+            android:textColor="#FF5722" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DDDDDD"
+            android:layout_marginVertical="8dp" />
+
+        <TextView
+            android:id="@+id/txtTotalCost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginBottom="16dp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnProceedToCheckout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Proceed to Checkout"
+        android:textSize="16sp"
+        android:backgroundTint="#795548"
+        android:textColor="#FFFFFF"
+        android:padding="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp" />
+
+</LinearLayout>

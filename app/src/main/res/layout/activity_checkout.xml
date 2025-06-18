@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Main content -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Fixed AppBar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:orientation="vertical">
+            <include layout="@layout/app_bar" />
+        </LinearLayout>
+
+        <!-- Scrollable content -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <!-- Shipping Address -->
+                <TextView
+                    android:text="Shipping Address"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:textColor="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
+
+                    <TextView
+                        android:id="@+id/txtShippingAddress"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="No address selected"
+                        android:textSize="16sp"
+                        android:maxLines="2"
+                        android:ellipsize="end" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:text="CHANGE"
+                        android:textSize="12sp"
+                        android:textColor="@color/primary"
+                        android:background="@drawable/button_background_selector" />
+                </LinearLayout>
+
+                <!-- Shipping Type -->
+                <TextView
+                    android:text="Choose Shipping Type"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:textColor="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
+
+                    <TextView
+                        android:id="@+id/txtShippingType"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Standard (Economy)"
+                        android:textSize="16sp"
+                        android:maxLines="2"
+                        android:ellipsize="end" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_ShippingType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:text="CHANGE"
+                        android:textSize="12sp"
+                        android:textColor="@color/primary"
+                        android:background="@drawable/button_background_selector" />
+                </LinearLayout>
+
+                <!-- Order List -->
+                <TextView
+                    android:text="Order List"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:textColor="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_checkout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginTop="8dp" />
+
+                <!-- Amount Summary -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:padding="12dp"
+                    android:background="@color/gray">
+
+                    <TextView
+                        android:id="@+id/txtTotal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tổng tiền: 0đ"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/txtDiscount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Giảm giá: 0đ"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/txtFinal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Thành tiền: 0đ"
+                        android:textStyle="bold"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Continue Button (Always visible) -->
+        <Button
+            android:id="@+id/btnContinueToPayment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Continue to Payment"
+            android:backgroundTint="@color/primary"
+            android:textColor="#FFFFFF"
+            android:layout_margin="16dp" />
+    </LinearLayout>
+
+    <!-- Loading Indicator -->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:indeterminate="true" />
+</FrameLayout>
