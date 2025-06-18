@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8F6F4"
+    tools:ignore="UseAppTint">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:orientation="horizontal"
+        android:background="#8B5C2A"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/sym_def_app_icon"
+            android:background="@android:color/white"
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:clipToOutline="true"
+            android:contentDescription="Avatar" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Angie Brekke"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Online"
+                android:textColor="#F5E9E0"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@android:drawable/ic_menu_more"
+            android:background="@android:color/transparent"
+            android:contentDescription="Menu"
+            android:tint="@android:color/white"
+            tools:ignore="UseAppTint" />
+    </LinearLayout>
+
+    <!-- Chat content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#F8F6F4">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Date label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TODAY"
+                android:textColor="#BCA18A"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:padding="8dp" />
+
+            <!-- Message left -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start"
+                android:layout_marginTop="8dp">
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@android:drawable/sym_def_app_icon"
+                    android:background="@android:color/white"
+                    android:scaleType="centerCrop"
+                    android:layout_marginEnd="8dp"
+                    android:clipToOutline="true"
+                    android:contentDescription="Avatar" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+                        android:textColor="#8B5C2A"
+                        android:padding="12dp"
+                        android:textSize="15sp"
+                        android:backgroundTint="#EFE6E0"
+                        android:backgroundTintMode="src_in"
+                        android:layout_marginEnd="32dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:background="@drawable/bg_left_bubble" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="08:01 pm"
+                        android:textColor="#BCA18A"
+                        android:textSize="12sp"
+                        android:layout_gravity="end" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Message right (reply) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_marginTop="8dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+                        android:textColor="#fff"
+                        android:padding="12dp"
+                        android:textSize="15sp"
+                        android:layout_marginStart="32dp"
+                        android:backgroundTint="#8B5C2A"
+                        android:backgroundTintMode="src_in"
+                        android:background="@drawable/bg_right_bubble" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Esther Howard"
+                        android:textColor="#BCA18A"
+                        android:textSize="12sp"
+                        android:layout_gravity="end" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Image message -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start"
+                android:layout_marginTop="8dp">
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@android:drawable/sym_def_app_icon"
+                    android:background="@android:color/white"
+                    android:scaleType="centerCrop"
+                    android:layout_marginEnd="8dp"
+                    android:clipToOutline="true"
+                    android:contentDescription="Avatar" />
+                <ImageView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:scaleType="centerCrop"
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp" />
+            </LinearLayout>
+
+            <!-- Audio message -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start"
+                android:layout_marginTop="8dp">
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@android:drawable/sym_def_app_icon"
+                    android:background="@android:color/white"
+                    android:scaleType="centerCrop"
+                    android:layout_marginEnd="8dp"
+                    android:clipToOutline="true"
+                    android:contentDescription="Avatar" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp"
+                    android:backgroundTint="#EFE6E0"
+                    android:backgroundTintMode="src_in"
+                    android:background="@drawable/bg_left_bubble">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_media_play"
+                        android:tint="#8B5C2A" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0:13"
+                        android:textColor="#8B5C2A"
+                        android:textSize="15sp"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Esther Howard"
+                    android:textColor="#BCA18A"
+                    android:textSize="12sp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Input bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#fff"
+        android:padding="8dp">
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_edittext_round"
+            android:hint="Type a message here..."
+            android:paddingHorizontal="16dp"
+            android:textColor="#8B5C2A"
+            android:textColorHint="#BCA18A"
+            android:textSize="15sp" />
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/ic_menu_send"
+            android:background="@drawable/bg_signin_button_round"
+            android:tint="#fff"
+            android:layout_marginStart="8dp"
+            android:contentDescription="Send" />
+    </LinearLayout>
+
+</LinearLayout>
