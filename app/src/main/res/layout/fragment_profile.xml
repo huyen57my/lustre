@@ -137,6 +137,7 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
+                android:id="@+id/profile_tab_my_order"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true">
 

@@ -1,6 +1,8 @@
 package adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +17,23 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.lustre.R;
+import com.example.lustre.activities.ProductDetailActivity;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import models.Product;
-
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
     private Context context;
     private List<Product> productList;
     private OnProductClickListener listener;
+    private FirebaseFirestore db;
+    private String userId;
 
     public List<Product> getProducts() {
         return productList;
@@ -39,6 +47,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public ProductAdapter(Context context, List<Product> productList) {
         this.context = context;
         this.productList = productList;
+        this.db = FirebaseFirestore.getInstance();
+
+        SharedPreferences prefs = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        this.userId = prefs.getString("user_id", null);
     }
 
     public void setOnProductClickListener(OnProductClickListener listener) {
@@ -85,16 +97,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         }
 
         public void bind(Product product, int position) {
-            // Set product name
             tvProductName.setText(product.getName());
-
-            // ✅ Correct: Set rating (ví dụ: "4.5")
-            tvRating.setText("5"); // Nếu có getRating()
-
-            // ✅ Correct: Set price
+            tvRating.setText("5"); // Hoặc lấy từ product.getRating()
             tvProductPrice.setText(product.getFormattedPrice());
 
-            // Load image
             List<String> imageUrls = product.getImageUrl();
             if (imageUrls != null && !imageUrls.isEmpty()) {
                 Glide.with(context)
@@ -105,21 +111,67 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                                 .error(R.drawable.ic_logo))
                         .into(ivProductImage);
             }
-            // Set heart icon
-            btnLove.setImageResource(product.isFavorite() ? R.drawable.heart_fill : R.drawable.heart);
 
-            // Handle click events
+            // Check if the product is in the wishlist
+            if (userId != null) {
+                db.collection("wishlists")
+                        .whereEqualTo("userId", userId)
+                        .whereEqualTo("productId", product.getId())
+                        .get()
+                        .addOnSuccessListener(snapshot -> {
+                            boolean liked = !snapshot.isEmpty();
+                            product.setFavorite(liked);
+                            btnLove.setImageResource(liked ? R.drawable.heart_fill : R.drawable.heart);
+                        });
+            }
+
+            // Open product detail activity on item click
             itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(context, ProductDetailActivity.class);
+                intent.putExtra("product_id", product.getId());
+                context.startActivity(intent);
+
                 if (listener != null) {
                     listener.onProductClick(product);
                 }
             });
 
+            // Handle wishlist button click
             btnLove.setOnClickListener(v -> {
-                if (listener != null) {
-                    product.setFavorite(!product.isFavorite());
-                    listener.onFavoriteClick(product, position);
-                    notifyItemChanged(position);
+                if (userId == null) return;
+
+                if (product.isFavorite()) {
+                    // Remove from wishlist
+                    db.collection("wishlists")
+                            .whereEqualTo("userId", userId)
+                            .whereEqualTo("productId", product.getId())
+                            .get()
+                            .addOnSuccessListener(snapshot -> {
+                                for (QueryDocumentSnapshot doc : snapshot) {
+                                    db.collection("wishlists").document(doc.getId()).delete();
+                                }
+                                product.setFavorite(false);
+                                notifyItemChanged(position);
+                                if (listener != null) {
+                                    listener.onFavoriteClick(product, position);
+                                }
+                            });
+                } else {
+                    // Add to wishlist
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("userId", userId);
+                    data.put("productId", product.getId());
+                    data.put("createdAt", System.currentTimeMillis());
+
+                    db.collection("wishlists")
+                            .add(data)
+                            .addOnSuccessListener(doc -> {
+                                product.setFavorite(true);
+                                notifyItemChanged(position);
+                                if (listener != null) {
+                                    listener.onFavoriteClick(product, position);
+                                }
+                            });
                 }
             });
         }

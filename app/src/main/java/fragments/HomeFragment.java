@@ -46,9 +46,7 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
     private ImageButton btnSearch;
     private ViewPager2 bannerViewPager;
     private TabLayout tabLayout;
-    private ImageView btnShirt, btnPant, btnDress;
     private RecyclerView recyclerViewProducts;
-
     private ProductAdapter productAdapter;
     private boolean isLoading = false;
     private boolean isLastPage = false;
@@ -64,14 +62,12 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
 
         initViews(view);
         setupSearchAndFilter();
-        setupCategoryClicks();
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         setupBanner(view);
         setupProductsRecyclerView(view);
         loadProducts();
@@ -85,11 +81,6 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         // Banner
         bannerViewPager = view.findViewById(R.id.bannerViewPager);
         tabLayout = view.findViewById(R.id.tabLayout);
-
-        // Categories
-        btnShirt = view.findViewById(R.id.home_btn_Shirt);
-        btnPant = view.findViewById(R.id.home_btn_Pant);
-        btnDress = view.findViewById(R.id.home_btn_dress);
 
         // Products
         recyclerViewProducts = view.findViewById(R.id.recyclerViewProducts);
@@ -123,13 +114,8 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
             String keyword = edtSearchKeyword.getText().toString().trim();
             navigateToSearch(keyword);
         });
-    }
 
 
-    private void setupCategoryClicks() {
-        btnShirt.setOnClickListener(v -> navigateToSearchWithCategory("T-Shirt"));
-        btnPant.setOnClickListener(v -> navigateToSearchWithCategory("Pant"));
-        btnDress.setOnClickListener(v -> navigateToSearchWithCategory("Dress"));
     }
 
     private void navigateToSearch(String searchKeyword) {

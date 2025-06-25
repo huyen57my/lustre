@@ -100,7 +100,7 @@ public class CartFragment extends Fragment {
         });
         itemTouchHelper.attachToRecyclerView(rvMyCart);
 
-        swipeRefreshLayout.setOnRefreshListener(() -> fetchCartItems());
+        swipeRefreshLayout.setOnRefreshListener(this::fetchCartItems);
 
         fetchCartItems();
 
@@ -110,10 +110,12 @@ public class CartFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        fetchCartItems();
+        // Không gọi lại fetchCartItems() ở đây để tránh gọi trùng
     }
 
     private void fetchCartItems() {
+        cartItems.clear(); // Clear trước khi fetch
+
         SharedPreferences prefs = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         String userId = prefs.getString("user_id", null);
         if (userId == null) {
@@ -147,12 +149,11 @@ public class CartFragment extends Fragment {
             cartItems.clear();
             adapter.updateItems(cartItems);
             swipeRefreshLayout.setRefreshing(false);
-            Log.d("Cart", "Không có item nào trong giỏ hàng.");
             return;
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        cartItems.clear();
+        cartItems.clear(); // Clear trước khi xử lý dữ liệu
 
         final int[] loadedCount = {0};
 
@@ -175,7 +176,6 @@ public class CartFragment extends Fragment {
                     })
                     .addOnFailureListener(e -> {
                         loadedCount[0]++;
-                        Log.e("Cart", "Lỗi khi fetch sản phẩm: " + e.getMessage());
                         if (loadedCount[0] == cartRawItems.size()) {
                             adapter.updateItems(cartItems);
                             swipeRefreshLayout.setRefreshing(false);
@@ -276,9 +276,9 @@ public class CartFragment extends Fragment {
 
             Intent intent = new Intent(requireContext(), CheckoutActivity.class);
             intent.putExtra("selectedItems", selectedItems);
-            intent.putExtra("totalAmount", subtotal[0]);        // tổng sản phẩm
-            intent.putExtra("discountAmount", discount[0]);     // giảm giá
-            intent.putExtra("finalAmount", totalCost[0]);       // tổng thanh toán
+            intent.putExtra("totalAmount", subtotal[0]);
+            intent.putExtra("discountAmount", discount[0]);
+            intent.putExtra("finalAmount", totalCost[0]);
             startActivity(intent);
         });
 

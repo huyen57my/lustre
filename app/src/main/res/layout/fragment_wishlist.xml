@@ -19,47 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/white" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:paddingRight="20dp"
-            android:orientation="horizontal">
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_all"
-                android:layout_width="70dp"
-                android:layout_height="40dp"
-                android:layout_marginRight="5dp"
-                android:textColor="@color/button_text_selector"
-                android:background="@drawable/button_background_selector"
-                android:text="All"/>
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_shirt"
-                android:layout_marginRight="5dp"
-                android:layout_width="80dp"
-                android:layout_height="40dp"
-                android:textColor="@color/button_text_selector"
-                android:background="@drawable/button_background_selector"
-                android:text="Shirt"/>
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_pant"
-                android:layout_width="80dp"
-                android:layout_marginRight="4dp"
-                android:textColor="@color/button_text_selector"
-                android:background="@drawable/button_background_selector"
-                android:layout_height="40dp"
-                android:text="Pant"/>
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_dress"
-                android:layout_width="100dp"
-                android:textColor="@color/button_text_selector"
-                android:background="@drawable/button_background_selector"
-                android:layout_height="40dp"
-                android:text="Dress"/>
-        </LinearLayout>
     </LinearLayout>
 
     <!-- Scrollable Products Content -->

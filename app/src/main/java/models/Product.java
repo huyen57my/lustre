@@ -202,6 +202,9 @@ public class Product implements Serializable {
         return "other";
     }
 
+    public double getDisplayPrice() {
+        return sale > 0 ? sale : price;
+    }
     @Exclude
     private DocumentSnapshot documentSnapshot;
 

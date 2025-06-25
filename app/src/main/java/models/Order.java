@@ -96,5 +96,21 @@ public class Order {
         this.createdAt = createdAt;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getTotalQuantity() {
+        int total = 0;
+        for (CartDisplayItem p : products) {
+            total += p.getQuantity();
+        }
+        return total;
+    }
+
     // Getters & Setters
 }

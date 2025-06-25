@@ -69,124 +69,6 @@
                 app:tabIndicatorHeight="0dp"
                 android:background="@android:color/transparent" />
 
-            <!-- Categories Section -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="20dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_marginBottom="20dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="30sp"
-                    android:textColor="@color/black"
-                    android:text="Category"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <!-- T-Shirt Category -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center_horizontal"
-                        android:layout_marginRight="20dp">
-
-                        <FrameLayout
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
-                            android:background="@drawable/rounded_button"
-                            android:backgroundTint="@color/second"
-                            android:layout_gravity="center">
-
-                            <ImageView
-                                android:id="@+id/home_btn_Shirt"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:src="@drawable/shirt"
-                                android:layout_gravity="center" />
-                        </FrameLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="T-Shirt"
-                            android:textSize="14sp"
-                            android:textColor="@android:color/black"
-                            android:layout_marginTop="4dp" />
-                    </LinearLayout>
-
-                    <!-- Pant Category -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center_horizontal"
-                        android:layout_marginRight="20dp">
-
-                        <FrameLayout
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
-                            android:background="@drawable/rounded_button"
-                            android:backgroundTint="@color/second"
-                            android:layout_gravity="center">
-
-                            <ImageView
-                                android:id="@+id/home_btn_Pant"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:src="@drawable/pant"
-                                android:layout_gravity="center" />
-                        </FrameLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Pant"
-                            android:textSize="14sp"
-                            android:textColor="@android:color/black"
-                            android:layout_marginTop="4dp" />
-                    </LinearLayout>
-
-                    <!-- Dress Category -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center_horizontal">
-
-                        <FrameLayout
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
-                            android:background="@drawable/rounded_button"
-                            android:backgroundTint="@color/second"
-                            android:layout_gravity="center">
-
-                            <ImageView
-                                android:id="@+id/home_btn_dress"
-                                android:layout_width="30dp"
-                                android:layout_height="40dp"
-                                android:src="@drawable/dress"
-                                android:layout_gravity="center" />
-                        </FrameLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Dress"
-                            android:textSize="14sp"
-                            android:textColor="@android:color/black"
-                            android:layout_marginTop="4dp" />
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-
             <!-- Flash Sale Products Section -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -198,11 +80,10 @@
                     android:layout_marginBottom="20dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="30sp"
+                    android:textSize="25sp"
                     android:textColor="@color/black"
-                    android:text="Flash sale"/>
+                    android:text="FLASH SALE"/>
 
-                <!-- Products RecyclerView -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewProducts"
                     android:layout_width="match_parent"
