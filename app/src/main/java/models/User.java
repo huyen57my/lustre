@@ -15,6 +15,8 @@ public class User {
     private String avatar;
     private String role;
     private List<String> address;
+    private String otpCode;
+
     public User() {
     }
 
@@ -30,6 +32,13 @@ public class User {
         this.address = address;
     }
 
+    public String getOtpCode() {
+        return otpCode;
+    }
+
+    public void setOtpCode(String otpCode) {
+        this.otpCode = otpCode;
+    }
     public String getRole() {
         return role;
     }

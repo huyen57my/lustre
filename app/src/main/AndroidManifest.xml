@@ -21,6 +21,9 @@
         android:theme="@style/Theme.Lustre"
         tools:targetApi="31">
         <activity
+            android:name=".activities.OtpVerificationActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.OrderDetailActivity"
             android:exported="false" />
         <activity

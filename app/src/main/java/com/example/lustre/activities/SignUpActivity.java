@@ -76,19 +76,28 @@ public class SignUpActivity extends AppCompatActivity {
             authRepo.register(user, new AuthRepository.AuthCallback() {
                 @Override
                 public void onSuccess(User user) {
-                    Toast.makeText(SignUpActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(SignUpActivity.this, CreateProfileActivity.class);
-                    intent.putExtra("email", user.getEmail());
-                    intent.putExtra("name", user.getName());
-                    startActivity(intent);
+                    runOnUiThread(() -> {
+                        Toast.makeText(SignUpActivity.this, "Đăng ký thành công! Vui lòng kiểm tra email để nhận OTP.", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(SignUpActivity.this, OtpVerificationActivity.class);
+                        intent.putExtra("email", user.getEmail());
+                        intent.putExtra("name", user.getName());
+                        intent.putExtra("id", user.getId());
+                        intent.putExtra("phone", user.getPhone());
+                        intent.putExtra("gender", user.getGender());
+                        intent.putExtra("avatar", user.getAvatar());
+                        intent.putExtra("role", user.getRole());
+                        startActivity(intent);
+                        finish();
+                    });
                 }
+
 
                 @Override
                 public void onFailure(String errorMessage) {
                     Toast.makeText(SignUpActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                 }
-            });
-        });
+            });        });
 
     }
 

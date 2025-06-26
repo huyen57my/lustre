@@ -46,8 +46,9 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("androidx.recyclerview:recyclerview:1.3.1")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation(libs.swiperefreshlayout)
-    implementation(libs.recyclerview) // Để gửi ảnh lên Cloudinary
+    implementation(libs.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

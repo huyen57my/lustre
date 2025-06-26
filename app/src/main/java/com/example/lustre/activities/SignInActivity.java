@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,8 @@ public class SignInActivity extends AppCompatActivity {
 
     EditText edtEmail;
     EditText edtPassword;
+    RadioButton radioAgree;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,11 @@ public class SignInActivity extends AppCompatActivity {
 
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(SignInActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (!radioAgree.isChecked()) {
+                Toast.makeText(SignInActivity.this, "Vui lòng đồng ý với điều khoản", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -80,6 +88,7 @@ public class SignInActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.sign_in_btnLogin);
         edtEmail = findViewById(R.id.sign_in_txtEmail);
         edtPassword = findViewById(R.id.sign_in_txtPassword);
+        radioAgree = findViewById(R.id.radio_agree);
     }
 
 }
