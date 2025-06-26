@@ -3,7 +3,6 @@ package com.example.lustre.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -24,6 +23,7 @@ import models.CartDisplayItem;
 import models.Order;
 import models.OrderStatus;
 import models.ShippingType;
+import models.VoucherUsage;
 
 public class CheckoutActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SHIPPING = 1001;
@@ -31,12 +31,11 @@ public class CheckoutActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Button btnContinue, btnShip, btnAddress;
     private TextView txtShippingAddress, txtShippingType;
-    private TextView txtTotal, txtDiscount, txtFinal;
+    private TextView txtTotal, txtDiscount, txtFinal, txtShippingFee;
+    private ImageButton btnBack;
 
     private CheckoutAdapter adapter;
     private List<CartDisplayItem> selectedItems;
-
-    private ImageButton btnBack;
 
     private ShippingType selectedShippingType = ShippingType.TIET_KIEM;
     private FirebaseFirestore firestore;
@@ -44,6 +43,10 @@ public class CheckoutActivity extends AppCompatActivity {
     private double totalAmount;
     private double discountAmount;
     private double finalAmount;
+    private double shippingFee = 0;
+
+    private String voucherCode = "";
+    private String discountType = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,7 @@ public class CheckoutActivity extends AppCompatActivity {
         txtTotal = findViewById(R.id.txtTotal);
         txtDiscount = findViewById(R.id.txtDiscount);
         txtFinal = findViewById(R.id.txtFinal);
+        txtShippingFee = findViewById(R.id.txtShippingFee);
 
         recyclerView = findViewById(R.id.recycler_checkout);
         btnContinue = findViewById(R.id.btnContinueToPayment);
@@ -74,17 +78,27 @@ public class CheckoutActivity extends AppCompatActivity {
         discountAmount = getIntent().getDoubleExtra("discountAmount", 0);
         finalAmount = getIntent().getDoubleExtra("finalAmount", 0);
 
+        // Lấy voucher
+        voucherCode = getIntent().getStringExtra("voucherCode");
+        discountType = getIntent().getStringExtra("discountType");
+
+        // Xử lý miễn phí ship nếu voucher là free_shipping
+        if ("free_shipping".equals(discountType)) {
+            shippingFee = 0;
+        } else {
+            updateShippingType(); // gán shippingFee bình thường
+        }
+
+        finalAmount = totalAmount - discountAmount + shippingFee;
+
         adapter = new CheckoutAdapter(selectedItems, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        updateShippingType();
+        txtShippingType.setText(selectedShippingType.getDescription());
+        updateAmountDisplay();
         fetchDefaultAddress();
 
-        Log.d("DEBUG", "onCreate: " + finalAmount);
-
-        txtShippingType.setText(selectedShippingType.getDescription());
-        txtFinal.setText("Thành tiền: " + finalAmount + "đ");
         btnShip.setOnClickListener(v -> {
             Intent intent = new Intent(CheckoutActivity.this, ChooseShippingActivity.class);
             startActivityForResult(intent, REQUEST_CODE_SHIPPING);
@@ -102,7 +116,6 @@ public class CheckoutActivity extends AppCompatActivity {
 
             String address = txtShippingAddress.getText().toString();
             long createdAt = System.currentTimeMillis();
-            String voucherCode = "";
 
             Order order = new Order(
                     null,
@@ -117,7 +130,7 @@ public class CheckoutActivity extends AppCompatActivity {
                     createdAt
             );
 
-            saveOrderToFirestore(order);
+            saveOrderAndVoucherUsage(order, userId, voucherCode);
         });
 
         btnBack.setOnClickListener(v -> finish());
@@ -129,14 +142,23 @@ public class CheckoutActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_SHIPPING && resultCode == RESULT_OK && data != null) {
             String typeName = data.getStringExtra("selectedShipping");
             selectedShippingType = ShippingType.valueOf(typeName);
-            updateShippingType();
+
+            // Nếu không dùng freeship thì cập nhật lại shipping
+            if (!"free_shipping".equals(discountType)) {
+                updateShippingType();
+                finalAmount = totalAmount - discountAmount + shippingFee;
+            } else {
+                shippingFee = 0;
+                finalAmount = totalAmount - discountAmount;
+            }
+
+            updateAmountDisplay();
         }
     }
 
     private void updateShippingType() {
         txtShippingType.setText(selectedShippingType.getDescription());
 
-        double shippingFee = 0;
         switch (selectedShippingType) {
             case HOA_TOC:
                 shippingFee = 30000;
@@ -145,23 +167,36 @@ public class CheckoutActivity extends AppCompatActivity {
                 shippingFee = 15000;
                 break;
         }
-
-        finalAmount = totalAmount - discountAmount + shippingFee;
-        updateAmountDisplay();
     }
 
     private void updateAmountDisplay() {
         if (txtTotal != null) txtTotal.setText("Tổng tiền: " + totalAmount + "đ");
+        if (txtShippingFee != null) txtShippingFee.setText("Phí vận chuyển: " + shippingFee + "đ");
         if (txtDiscount != null) txtDiscount.setText("Giảm giá: " + discountAmount + "đ");
         if (txtFinal != null) txtFinal.setText("Thành tiền: " + finalAmount + "đ");
     }
 
-    private void saveOrderToFirestore(Order order) {
+    private void saveOrderAndVoucherUsage(Order order, String userId, String voucherCode) {
         firestore.collection("orders")
                 .add(order)
                 .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
-                    finish();
+                    if (voucherCode != null && !voucherCode.isEmpty()) {
+                        String usageId = voucherCode + "_" + userId;
+                        firestore.collection("voucher_usages")
+                                .document(usageId)
+                                .set(new VoucherUsage(userId, voucherCode))
+                                .addOnSuccessListener(ref -> {
+                                    Toast.makeText(this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Đặt hàng thành công nhưng không lưu được voucher", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                });
+                    } else {
+                        Toast.makeText(this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Lỗi khi đặt hàng", Toast.LENGTH_SHORT).show();

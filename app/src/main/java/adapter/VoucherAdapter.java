@@ -1,6 +1,9 @@
-package adapters;
+package adapter;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +18,6 @@ import com.example.lustre.R;
 import java.util.List;
 
 import models.Voucher;
-
 
 public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.VoucherViewHolder> {
 
@@ -38,14 +40,28 @@ public class VoucherAdapter extends RecyclerView.Adapter<VoucherAdapter.VoucherV
     public void onBindViewHolder(@NonNull VoucherViewHolder holder, int position) {
         Voucher voucher = voucherList.get(position);
         holder.tvCode.setText(voucher.getCode());
-        holder.tvCondition.setText(voucher.getCondition());
-        holder.tvDiscount.setText(voucher.getDiscount());
+        holder.tvCondition.setText(voucher.getDescription());
+
+        if ("percentage".equals(voucher.getDiscountType())) {
+            holder.tvDiscount.setText("Get " + voucher.getDiscountValue() + "% off");
+        } else {
+            holder.tvDiscount.setText("Free shipping");
+        }
 
         holder.btnCopy.setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("voucher_code", voucher.getCode());
+            clipboard.setPrimaryClip(clip);
+
             Toast.makeText(context, "Copied: " + voucher.getCode(), Toast.LENGTH_SHORT).show();
-            // Add ClipboardManager code if needed
+
+            SharedPreferences prefs = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+            String userId = prefs.getString("user_id", "");
+            String key = "voucher_used_" + userId + "_" + voucher.getCode();
+            prefs.edit().putBoolean(key, true).apply();
         });
     }
+
 
     @Override
     public int getItemCount() {

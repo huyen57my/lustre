@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +14,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.lustre.R;
+
+import firebase.AuthRepository;
+import models.User;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -40,8 +44,36 @@ public class SignInActivity extends AppCompatActivity {
         });
 
         btnLogin.setOnClickListener(v -> {
-            startActivity(new Intent(SignInActivity.this, MainActivity.class));
+            String email = edtEmail.getText().toString().trim();
+            String password = edtPassword.getText().toString().trim();
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(SignInActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            AuthRepository authRepo = new AuthRepository();
+            authRepo.login(email, password, new AuthRepository.AuthCallback() {
+                @Override
+                public void onSuccess(User user) {
+                    // Lưu user_id vào SharedPreferences
+                    getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
+                            .edit()
+                            .putString("user_id", user.getId())
+                            .apply();
+
+                    Toast.makeText(SignInActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                    finish();
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    Toast.makeText(SignInActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            });
         });
+
     }
     private void loadComponent() {
         txtSignUp = findViewById(R.id.sign_in_txtSignUp);
@@ -50,7 +82,4 @@ public class SignInActivity extends AppCompatActivity {
         edtPassword = findViewById(R.id.sign_in_txtPassword);
     }
 
-    private void handleLogin() {
-        startActivity(new Intent(SignInActivity.this, MainActivity.class));
-    }
 }

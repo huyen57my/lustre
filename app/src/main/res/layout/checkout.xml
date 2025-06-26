@@ -53,13 +53,6 @@
             android:layout_marginBottom="8dp" />
 
         <TextView
-            android:id="@+id/txtDeliveryFee"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
             android:id="@+id/txtDiscount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

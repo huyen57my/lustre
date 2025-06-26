@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.Toast;
@@ -38,6 +39,7 @@ import adapter.MyCartAdapter;
 import models.CartItem;
 import models.CartDisplayItem;
 import models.Product;
+import models.Voucher;
 
 public class CartFragment extends Fragment {
 
@@ -48,6 +50,7 @@ public class CartFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private MyCartAdapter adapter;
+    private Voucher appliedVoucher = null;
     private ArrayList<CartDisplayItem> cartItems = new ArrayList<>();
 
     private double totalPrice;
@@ -110,11 +113,10 @@ public class CartFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Không gọi lại fetchCartItems() ở đây để tránh gọi trùng
     }
 
     private void fetchCartItems() {
-        cartItems.clear(); // Clear trước khi fetch
+        cartItems.clear();
 
         SharedPreferences prefs = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         String userId = prefs.getString("user_id", null);
@@ -224,7 +226,6 @@ public class CartFragment extends Fragment {
         EditText edtPromoCode = view.findViewById(R.id.edtPromoCode);
         Button btnApply = view.findViewById(R.id.btnApply);
         TextView txtSubtotal = view.findViewById(R.id.txtSubtotal);
-        TextView txtDeliveryFee = view.findViewById(R.id.txtDeliveryFee);
         TextView txtDiscount = view.findViewById(R.id.txtDiscount);
         TextView txtTotalCost = view.findViewById(R.id.txtTotalCost);
         Button btnProceedToCheckout = view.findViewById(R.id.btnProceedToCheckout);
@@ -235,7 +236,6 @@ public class CartFragment extends Fragment {
         final double[] totalCost = {subtotal[0] + deliveryFee[0] - discount[0]};
 
         txtSubtotal.setText(String.format("Subtotal: $%.2f", subtotal[0]));
-        txtDeliveryFee.setText(String.format("Delivery Fee: $%.2f", deliveryFee[0]));
         txtDiscount.setText(String.format("Discount: -$%.2f", discount[0]));
         txtTotalCost.setText(String.format("Total Cost: $%.2f", totalCost[0]));
 
@@ -261,7 +261,6 @@ public class CartFragment extends Fragment {
 
             totalCost[0] = subtotal[0] + deliveryFee[0] - discount[0];
             txtSubtotal.setText(String.format("Subtotal: $%.2f", subtotal[0]));
-            txtDeliveryFee.setText(String.format("Delivery Fee: $%.2f", deliveryFee[0]));
             txtDiscount.setText(String.format("Discount: -$%.2f", discount[0]));
             txtTotalCost.setText(String.format("Total Cost: $%.2f", totalCost[0]));
         });
@@ -279,32 +278,86 @@ public class CartFragment extends Fragment {
             intent.putExtra("totalAmount", subtotal[0]);
             intent.putExtra("discountAmount", discount[0]);
             intent.putExtra("finalAmount", totalCost[0]);
+            if (appliedVoucher != null) {
+                intent.putExtra("voucherCode", appliedVoucher.getCode());
+                intent.putExtra("discountType", appliedVoucher.getDiscountType());
+            }
             startActivity(intent);
         });
 
         edtPromoCode.setFocusable(false);
-        edtPromoCode.setOnClickListener(v -> showPromoCodePopup(edtPromoCode));
-
+        edtPromoCode.setOnClickListener(v -> showPromoCodePopup(
+                edtPromoCode, txtSubtotal, txtDiscount, txtTotalCost,
+                subtotal, deliveryFee, discount, totalCost
+        ));
         dialog.show();
     }
 
-    private void showPromoCodePopup(EditText edtPromoCode) {
+    private void showPromoCodePopup(EditText edtPromoCode, TextView txtSubtotal, TextView txtDiscount, TextView txtTotalCost,
+                                    double[] subtotal, double[] deliveryFee, double[] discount, double[] totalCost) {
         View promoView = getLayoutInflater().inflate(R.layout.promo_code, null);
-        TextView tvFreeship = promoView.findViewById(R.id.tvPromoFreeship);
-        TextView tvDiscount10 = promoView.findViewById(R.id.tvPromoDiscount10);
-
         BottomSheetDialog promoDialog = new BottomSheetDialog(requireContext());
         promoDialog.setContentView(promoView);
 
-        tvFreeship.setOnClickListener(v -> {
-            edtPromoCode.setText("FREESHIP");
-            promoDialog.dismiss();
-        });
+        LinearLayout container = promoView.findViewById(R.id.llPromoContainer);
+        container.removeAllViews();
 
-        tvDiscount10.setOnClickListener(v -> {
-            edtPromoCode.setText("DISCOUNT2");
-            promoDialog.dismiss();
-        });
+        SharedPreferences prefs = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String userId = prefs.getString("user_id", null);
+        if (userId == null) return;
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("vouchers")
+                .whereEqualTo("isActive", true)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    for (QueryDocumentSnapshot doc : snapshot) {
+                        Voucher voucher = doc.toObject(Voucher.class);
+                        String usageId = voucher.getCode() + "_" + userId;
+
+                        db.collection("voucher_usages").document(usageId).get()
+                                .addOnSuccessListener(usage -> {
+                                    if (!usage.exists()) {
+                                        View voucherItem = LayoutInflater.from(requireContext())
+                                                .inflate(R.layout.item_voucher, container, false);
+
+                                        TextView tvCode = voucherItem.findViewById(R.id.tvVoucherCode);
+                                        TextView tvTitle = voucherItem.findViewById(R.id.tvVoucherTitle);
+
+                                        tvCode.setText(voucher.getCode());
+                                        tvTitle.setText(voucher.getTitle());
+
+                                        voucherItem.setOnClickListener(v -> {
+                                            if (subtotal[0] < voucher.getMinOrderValue()) {
+                                                Toast.makeText(requireContext(), "Minimum order: $" + voucher.getMinOrderValue(), Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+
+                                            appliedVoucher = voucher;
+                                            edtPromoCode.setText(voucher.getCode());
+
+                                            if (voucher.getDiscountType().equals("percentage")) {
+                                                discount[0] = subtotal[0] * voucher.getDiscountValue() / 100.0;
+                                                deliveryFee[0] = 5;
+                                            } else if (voucher.getDiscountType().equals("free_shipping")) {
+                                                discount[0] = 0;
+                                                deliveryFee[0] = 0;
+                                            }
+
+                                            totalCost[0] = subtotal[0] + deliveryFee[0] - discount[0];
+
+                                            txtSubtotal.setText(String.format("Subtotal: $%.2f", subtotal[0]));
+                                            txtDiscount.setText(String.format("Discount: -$%.2f", discount[0]));
+                                            txtTotalCost.setText(String.format("Total Cost: $%.2f", totalCost[0]));
+
+                                            promoDialog.dismiss();
+                                        });
+
+                                        container.addView(voucherItem);
+                                    }
+                                });
+                    }
+                });
 
         promoDialog.show();
     }
