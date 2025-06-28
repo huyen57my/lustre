@@ -130,7 +130,38 @@ public class CheckoutActivity extends AppCompatActivity {
                     createdAt
             );
 
-            saveOrderAndVoucherUsage(order, userId, voucherCode);
+            firestore.collection("orders")
+                    .add(order)
+                    .addOnSuccessListener(documentReference -> {
+                        String orderId = documentReference.getId();
+                        documentReference.update("id", orderId);
+                        order.setId(orderId);
+
+                        updateCartAfterOrder(userId, selectedItems);
+
+                        if (voucherCode != null && !voucherCode.isEmpty()) {
+                            String usageId = voucherCode + "_" + userId;
+                            firestore.collection("voucher_usages")
+                                    .document(usageId)
+                                    .set(new VoucherUsage(userId, voucherCode))
+                                    .addOnSuccessListener(ref -> {
+                                        Toast.makeText(this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(CheckoutActivity.this, MyOrderActivity.class));
+                                        finish();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(this, "Đặt hàng thành công nhưng không lưu được voucher", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    });
+                        } else {
+                            Toast.makeText(this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(CheckoutActivity.this, MyOrderActivity.class));
+                            finish();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Lỗi khi đặt hàng", Toast.LENGTH_SHORT).show();
+                    });
         });
 
         btnBack.setOnClickListener(v -> finish());

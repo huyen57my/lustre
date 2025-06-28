@@ -51,37 +51,46 @@ public class AuthRepository {
                         return;
                     }
 
-                    db.collection("users")
-                            .whereEqualTo("phone", user.getPhone())
-                            .get()
-                            .addOnSuccessListener(phoneSnapshot -> {
-                                if (!phoneSnapshot.isEmpty()) {
-                                    callback.onFailure("Số điện thoại đã tồn tại.");
-                                    return;
-                                }
-
-                                db.collection("users")
-                                        .document(user.getId())
-                                        .set(user)
-                                        .addOnSuccessListener(aVoid -> {
-                                            // Gửi OTP
-                                            otpService.sendOtp(user.getEmail(), otp, new OtpService.OtpCallback() {
-                                                @Override
-                                                public void onSent(String message) {
-                                                    callback.onSuccess(user);
-                                                }
-
-                                                @Override
-                                                public void onFailed(String error) {
-                                                    callback.onFailure("Tạo tài khoản thành công nhưng gửi OTP thất bại: " + error);
-                                                }
-                                            });
-                                        })
-                                        .addOnFailureListener(e -> callback.onFailure("Lỗi tạo tài khoản: " + e.getMessage()));
-                            });
+                    if (!user.getPhone().isEmpty()) {
+                        db.collection("users")
+                                .whereEqualTo("phone", user.getPhone())
+                                .get()
+                                .addOnSuccessListener(phoneSnapshot -> {
+                                    if (!phoneSnapshot.isEmpty()) {
+                                        callback.onFailure("Số điện thoại đã tồn tại.");
+                                        return;
+                                    }
+                                    createUser(user, callback, otpService, otp);
+                                })
+                                .addOnFailureListener(e -> callback.onFailure("Lỗi kiểm tra số điện thoại: " + e.getMessage()));
+                    } else {
+                        // Nếu không có số điện thoại, tạo user luôn
+                        createUser(user, callback, otpService, otp);
+                    }
                 })
                 .addOnFailureListener(e -> callback.onFailure("Lỗi kiểm tra email: " + e.getMessage()));
     }
+
+    private void createUser(User user, AuthCallback callback, OtpService otpService, String otp) {
+        db.collection("users")
+                .document(user.getId())
+                .set(user)
+                .addOnSuccessListener(aVoid -> {
+                    otpService.sendOtp(user.getEmail(), otp, new OtpService.OtpCallback() {
+                        @Override
+                        public void onSent(String message) {
+                            callback.onSuccess(user);
+                        }
+
+                        @Override
+                        public void onFailed(String error) {
+                            callback.onFailure("Tạo tài khoản thành công nhưng gửi OTP thất bại: " + error);
+                        }
+                    });
+                })
+                .addOnFailureListener(e -> callback.onFailure("Lỗi tạo tài khoản: " + e.getMessage()));
+    }
+
 
     public void login(String email, String password, AuthCallback callback) {
         String hashedPassword = hashPassword(password);

@@ -18,7 +18,7 @@ public class OtpService {
     }
 
     private static final String TAG = "OtpService";
-    private static final String API_KEY = "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";
+    private static final String API_KEY = "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";
     private static final String FROM_EMAIL = "mynvh22411c@st.uel.edu.vn";
 
     public void sendOtpToEmail(String email, String otp) {
