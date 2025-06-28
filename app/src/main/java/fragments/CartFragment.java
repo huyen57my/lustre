@@ -27,13 +27,17 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.bumptech.glide.Glide;
 import com.example.lustre.R;
 import com.example.lustre.activities.CheckoutActivity;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import adapter.MyCartAdapter;
 import models.CartItem;
@@ -76,8 +80,20 @@ public class CartFragment extends Fragment {
         adapter.setOnProductCheckedChangeListener(() -> {
             double total = adapter.calculateTotalSelectedPrice();
             totalPrice = total;
-            txtTotalPrice.setText("Total: " + total + " $");
+            txtTotalPrice.setText("Tổng: " + formatVND(total));
             chkSelectAll.setChecked(adapter.areAllSelected());
+        });
+
+        adapter.setQuantityChangeListener(new MyCartAdapter.QuantityChangeListener() {
+            @Override
+            public void onQuantityIncreased(CartDisplayItem item, int position) {
+                updateQuantityInFirestore(item);
+            }
+
+            @Override
+            public void onQuantityDecreasedToZero(CartDisplayItem item, int position) {
+                showRemoveBottomSheet(item, position, false);
+            }
         });
 
         chkSelectAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -97,7 +113,7 @@ public class CartFragment extends Fragment {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 CartDisplayItem item = adapter.getItems().get(position);
-                showRemoveBottomSheet(item, position);
+                showRemoveBottomSheet(item, position, false);
                 adapter.notifyItemChanged(position);
             }
         });
@@ -105,15 +121,44 @@ public class CartFragment extends Fragment {
 
         swipeRefreshLayout.setOnRefreshListener(this::fetchCartItems);
 
-        fetchCartItems();
-
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        fetchCartItems();
     }
+
+    private void updateQuantityInFirestore(CartDisplayItem item) {
+        SharedPreferences prefs = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String userId = prefs.getString("user_id", null);
+        if (userId == null) return;
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users")
+                .document(userId)
+                .collection("cart")
+                .whereEqualTo("productId", item.getProduct().getId())
+                .whereEqualTo("size", item.getSize())
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        for (QueryDocumentSnapshot doc : querySnapshot) {
+                            doc.getReference()
+                                    .update("quantity", item.getQuantity())
+                                    .addOnSuccessListener(unused ->
+                                            Log.d("Cart", "Quantity updated for size " + item.getSize()))
+                                    .addOnFailureListener(e ->
+                                            Log.e("Cart", "Failed to update quantity: " + e.getMessage()));
+                        }
+                    } else {
+                        Log.e("Cart", "No matching item found to update.");
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("Cart", "Failed to find cart item: " + e.getMessage()));
+    }
+
 
     private void fetchCartItems() {
         cartItems.clear();
@@ -155,7 +200,7 @@ public class CartFragment extends Fragment {
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        cartItems.clear(); // Clear trước khi xử lý dữ liệu
+        cartItems.clear();
 
         final int[] loadedCount = {0};
 
@@ -186,7 +231,8 @@ public class CartFragment extends Fragment {
         }
     }
 
-    private void showRemoveBottomSheet(CartDisplayItem item, int position) {
+    private void showRemoveBottomSheet(CartDisplayItem item, int position, boolean isQuantityZero)
+    {
         View view = getLayoutInflater().inflate(R.layout.remove_product, null);
         BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
         dialog.setContentView(view);
@@ -200,7 +246,7 @@ public class CartFragment extends Fragment {
 
         tvProductName.setText(item.getProduct().getName());
         tvProductSize.setText("Size: " + item.getSize());
-        tvProductPrice.setText(item.getProduct().getPrice() + " $");
+        tvProductPrice.setText(formatVND(item.getProduct().getPrice()));
 
         Glide.with(requireContext())
                 .load(item.getProduct().getImageUrl().get(0))
@@ -208,12 +254,35 @@ public class CartFragment extends Fragment {
                 .error(R.drawable.ic_logo)
                 .into(imgProduct);
 
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        btnCancel.setOnClickListener(v -> {
+            dialog.dismiss();
+            if (isQuantityZero) {
+                item.setQuantity(1);
+                adapter.notifyItemChanged(position);
+                updateQuantityInFirestore(item);
+            }
+        });
 
         btnConfirm.setOnClickListener(v -> {
-            adapter.removeItem(position);
-            dialog.dismiss();
+            SharedPreferences prefs = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+            String userId = prefs.getString("user_id", null);
+            if (userId == null) return;
+
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(userId)
+                    .collection("cart")
+                    .document(item.getProduct().getId())
+                    .delete()
+                    .addOnSuccessListener(unused -> {
+                        adapter.removeItem(position);
+                        dialog.dismiss();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(requireContext(), "Xoá thất bại", Toast.LENGTH_SHORT).show();
+                    });
         });
+
 
         dialog.show();
     }
@@ -231,38 +300,38 @@ public class CartFragment extends Fragment {
         Button btnProceedToCheckout = view.findViewById(R.id.btnProceedToCheckout);
 
         final double[] subtotal = {adapter.calculateTotalSelectedPrice()};
-        final double[] deliveryFee = {5};
+        final double[] deliveryFee = {15000}; // 15,000₫
         final double[] discount = {0};
         final double[] totalCost = {subtotal[0] + deliveryFee[0] - discount[0]};
 
-        txtSubtotal.setText(String.format("Subtotal: $%.2f", subtotal[0]));
-        txtDiscount.setText(String.format("Discount: -$%.2f", discount[0]));
-        txtTotalCost.setText(String.format("Total Cost: $%.2f", totalCost[0]));
+        txtSubtotal.setText("Tạm tính: " + formatVND(subtotal[0]));
+        txtDiscount.setText("Giảm giá: -" + formatVND(discount[0]));
+        txtTotalCost.setText("Tổng thanh toán: " + formatVND(totalCost[0]));
 
         btnApply.setOnClickListener(v -> {
             String code = edtPromoCode.getText().toString().trim().toUpperCase();
             subtotal[0] = adapter.calculateTotalSelectedPrice();
-            deliveryFee[0] = 5;
+            deliveryFee[0] = 15000;
             discount[0] = 0;
 
             if (code.equals("DISCOUNT2")) {
-                discount[0] = 2;
+                discount[0] = 2000;
             } else if (code.equals("FREESHIP")) {
-                if (subtotal[0] >= 78) {
-                    discount[0] = 5;
+                if (subtotal[0] >= 78000) {
+                    discount[0] = 15000;
                 } else {
-                    edtPromoCode.setError("Order must be at least $78 to use FREESHIP");
+                    edtPromoCode.setError("Đơn hàng phải từ 78,000₫ để dùng mã FREESHIP");
                     return;
                 }
             } else {
-                edtPromoCode.setError("Invalid promo code");
+                edtPromoCode.setError("Mã không hợp lệ");
                 return;
             }
 
             totalCost[0] = subtotal[0] + deliveryFee[0] - discount[0];
-            txtSubtotal.setText(String.format("Subtotal: $%.2f", subtotal[0]));
-            txtDiscount.setText(String.format("Discount: -$%.2f", discount[0]));
-            txtTotalCost.setText(String.format("Total Cost: $%.2f", totalCost[0]));
+            txtSubtotal.setText("Tạm tính: " + formatVND(subtotal[0]));
+            txtDiscount.setText("Giảm giá: -" + formatVND(discount[0]));
+            txtTotalCost.setText("Tổng thanh toán: " + formatVND(totalCost[0]));
         });
 
         btnProceedToCheckout.setOnClickListener(v -> {
@@ -273,17 +342,52 @@ public class CartFragment extends Fragment {
                 return;
             }
 
-            Intent intent = new Intent(requireContext(), CheckoutActivity.class);
-            intent.putExtra("selectedItems", selectedItems);
-            intent.putExtra("totalAmount", subtotal[0]);
-            intent.putExtra("discountAmount", discount[0]);
-            intent.putExtra("finalAmount", totalCost[0]);
-            if (appliedVoucher != null) {
-                intent.putExtra("voucherCode", appliedVoucher.getCode());
-                intent.putExtra("discountType", appliedVoucher.getDiscountType());
+            SharedPreferences prefs = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+            String userId = prefs.getString("user_id", null);
+            if (userId == null) return;
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            List<Task<QuerySnapshot>> tasks = new ArrayList<>();
+            List<String> errors = new ArrayList<>();
+
+            for (CartDisplayItem item : selectedItems) {
+                Task<QuerySnapshot> task = db.collection("products")
+                        .whereEqualTo("id", item.getProduct().getId())
+                        .get()
+                        .addOnSuccessListener(snapshot -> {
+                            if (!snapshot.isEmpty()) {
+                                Product product = snapshot.getDocuments().get(0).toObject(Product.class);
+                                if (product.getStock() < item.getQuantity()) {
+                                    errors.add("Sản phẩm " + product.getName() + " chỉ còn " + product.getStock() + " sản phẩm.");
+                                }
+                            } else {
+                                errors.add("Không tìm thấy sản phẩm: " + item.getProduct().getName());
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            errors.add("Lỗi khi kiểm tra sản phẩm: " + item.getProduct().getName());
+                        });
+                tasks.add(task);
             }
-            startActivity(intent);
+
+            Tasks.whenAllComplete(tasks).addOnSuccessListener(results -> {
+                if (!errors.isEmpty()) {
+                    Toast.makeText(requireContext(), errors.get(0), Toast.LENGTH_LONG).show();
+                } else {
+                    Intent intent = new Intent(requireContext(), CheckoutActivity.class);
+                    intent.putExtra("selectedItems", selectedItems);
+                    intent.putExtra("totalAmount", subtotal[0]);
+                    intent.putExtra("discountAmount", discount[0]);
+                    intent.putExtra("finalAmount", totalCost[0]);
+                    if (appliedVoucher != null) {
+                        intent.putExtra("voucherCode", appliedVoucher.getCode());
+                        intent.putExtra("discountType", appliedVoucher.getDiscountType());
+                    }
+                    startActivity(intent);
+                }
+            });
         });
+
 
         edtPromoCode.setFocusable(false);
         edtPromoCode.setOnClickListener(v -> showPromoCodePopup(
@@ -329,7 +433,7 @@ public class CartFragment extends Fragment {
 
                                         voucherItem.setOnClickListener(v -> {
                                             if (subtotal[0] < voucher.getMinOrderValue()) {
-                                                Toast.makeText(requireContext(), "Minimum order: $" + voucher.getMinOrderValue(), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(requireContext(), "Tối thiểu " + formatVND(voucher.getMinOrderValue()), Toast.LENGTH_SHORT).show();
                                                 return;
                                             }
 
@@ -338,7 +442,7 @@ public class CartFragment extends Fragment {
 
                                             if (voucher.getDiscountType().equals("percentage")) {
                                                 discount[0] = subtotal[0] * voucher.getDiscountValue() / 100.0;
-                                                deliveryFee[0] = 5;
+                                                deliveryFee[0] = 15000;
                                             } else if (voucher.getDiscountType().equals("free_shipping")) {
                                                 discount[0] = 0;
                                                 deliveryFee[0] = 0;
@@ -346,9 +450,9 @@ public class CartFragment extends Fragment {
 
                                             totalCost[0] = subtotal[0] + deliveryFee[0] - discount[0];
 
-                                            txtSubtotal.setText(String.format("Subtotal: $%.2f", subtotal[0]));
-                                            txtDiscount.setText(String.format("Discount: -$%.2f", discount[0]));
-                                            txtTotalCost.setText(String.format("Total Cost: $%.2f", totalCost[0]));
+                                            txtSubtotal.setText("Tạm tính: " + formatVND(subtotal[0]));
+                                            txtDiscount.setText("Giảm giá: -" + formatVND(discount[0]));
+                                            txtTotalCost.setText("Tổng thanh toán: " + formatVND(totalCost[0]));
 
                                             promoDialog.dismiss();
                                         });
@@ -360,5 +464,9 @@ public class CartFragment extends Fragment {
                 });
 
         promoDialog.show();
+    }
+
+    private String formatVND(double amount) {
+        return String.format(Locale.US, "%,.0f₫", amount);
     }
 }

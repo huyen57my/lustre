@@ -144,12 +144,13 @@ public class Product implements Serializable {
     }
 
     public String getFormattedPrice() {
-        return String.format("%.0f VND", price);
-    }
+        java.text.NumberFormat formatter = java.text.NumberFormat.getInstance(new java.util.Locale("vi", "VN"));
+        return formatter.format(this.price) + " VND";    }
 
     public String getFormattedSalePrice() {
         if (sale != null && sale > 0) {
-            return String.format("%.0f VND", sale);
+            java.text.NumberFormat formatter = java.text.NumberFormat.getInstance(new java.util.Locale("vi", "VN"));
+            return formatter.format(this.sale) + " VND";
         }
         return null;
     }

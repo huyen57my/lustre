@@ -98,8 +98,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         public void bind(Product product, int position) {
             tvProductName.setText(product.getName());
-            tvRating.setText("5"); // Hoặc lấy từ product.getRating()
-            tvProductPrice.setText(product.getFormattedPrice());
+            tvRating.setText("5");
+            if (product.getSale() > 0 ) {
+                tvProductPrice.setText(product.getFormattedSalePrice());
+            } else {
+                tvProductPrice.setText(product.getFormattedPrice());
+            }
 
             List<String> imageUrls = product.getImageUrl();
             if (imageUrls != null && !imageUrls.isEmpty()) {

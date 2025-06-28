@@ -33,6 +33,17 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.MyViewHold
         updateItems(items);
     }
 
+    public interface QuantityChangeListener {
+        void onQuantityIncreased(CartDisplayItem item, int position);
+        void onQuantityDecreasedToZero(CartDisplayItem item, int position);
+    }
+
+    private QuantityChangeListener quantityChangeListener;
+
+    public void setQuantityChangeListener(QuantityChangeListener listener) {
+        this.quantityChangeListener = listener;
+    }
+
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView txtName, txtSize, txtPrice, txtQuantity;
         ImageView imgProduct;
@@ -66,7 +77,11 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.MyViewHold
 
         holder.txtName.setText(product.getName());
         holder.txtSize.setText("Size: " + item.getSize());
-        holder.txtPrice.setText(product.getPrice() + " VND");
+        if (product.getSale() > 0) {
+            holder.txtPrice.setText(formatVND(product.getSale()));
+        } else {
+            holder.txtPrice.setText(formatVND(product.getPrice()));
+        }
         holder.txtQuantity.setText(String.valueOf(item.getQuantity()));
 
         List<String> imageList = product.getImageUrl();
@@ -94,7 +109,14 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.MyViewHold
             int newQty = item.getQuantity() + 1;
             item.setQuantity(newQty);
             notifyItemChanged(position);
-            if (selectedStates.get(position) && listener != null) listener.onProductCheckedChanged();
+
+            if (quantityChangeListener != null) {
+                quantityChangeListener.onQuantityIncreased(item, position);
+            }
+
+            if (selectedStates.get(position) && listener != null) {
+                listener.onProductCheckedChanged();
+            }
         });
 
         holder.btnDown.setOnClickListener(v -> {
@@ -102,9 +124,21 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.MyViewHold
             if (currQty > 1) {
                 item.setQuantity(currQty - 1);
                 notifyItemChanged(position);
-                if (selectedStates.get(position) && listener != null) listener.onProductCheckedChanged();
+
+                if (quantityChangeListener != null) {
+                    quantityChangeListener.onQuantityIncreased(item, position);
+                }
+
+                if (selectedStates.get(position) && listener != null) {
+                    listener.onProductCheckedChanged();
+                }
+            } else {
+                if (quantityChangeListener != null) {
+                    quantityChangeListener.onQuantityDecreasedToZero(item, position);
+                }
             }
         });
+
     }
 
     @Override
@@ -126,6 +160,11 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.MyViewHold
         return selectedItems;
     }
 
+    private String formatVND(double amount) {
+        java.text.NumberFormat formatter = java.text.NumberFormat.getInstance(new java.util.Locale("vi", "VN"));
+        return formatter.format(amount) + " VND";
+    }
+
     public void setOnProductCheckedChangeListener(OnProductCheckedChangeListener listener) {
         this.listener = listener;
     }
@@ -134,7 +173,9 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.MyViewHold
         double total = 0;
         for (int i = 0; i < items.size(); i++) {
             if (selectedStates.get(i)) {
-                total += items.get(i).getProduct().getPrice() * items.get(i).getQuantity();
+                Product p = items.get(i).getProduct();
+                double itemPrice = p.getSale() > 0 ? p.getSale() : p.getPrice();
+                total += itemPrice * items.get(i).getQuantity();
             }
         }
         return total;

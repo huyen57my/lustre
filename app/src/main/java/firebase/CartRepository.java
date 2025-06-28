@@ -17,25 +17,24 @@ public class CartRepository {
 
     public void addToCart(String userId, CartItem item) {
         getCartRef(userId)
-                .document(item.getProductId())
+                .whereEqualTo("productId", item.getProductId())
+                .whereEqualTo("size", item.getSize())
                 .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        Long currentQuantity = documentSnapshot.getLong("quantity");
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        var doc = querySnapshot.getDocuments().get(0);
+                        Long currentQuantity = doc.getLong("quantity");
                         int newQuantity = (currentQuantity != null ? currentQuantity.intValue() : 0) + item.getQuantity();
 
-                        getCartRef(userId)
-                                .document(item.getProductId())
+                        doc.getReference()
                                 .update("quantity", newQuantity)
                                 .addOnSuccessListener(aVoid -> {
                                 })
                                 .addOnFailureListener(e -> {
                                 });
                     } else {
-                        // Nếu chưa có: thêm mới
                         getCartRef(userId)
-                                .document(item.getProductId())
-                                .set(item)
+                                .add(item)
                                 .addOnSuccessListener(aVoid -> {
                                 })
                                 .addOnFailureListener(e -> {
@@ -43,9 +42,10 @@ public class CartRepository {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // notify failure khi đọc dữ liệu
+                    // xử lý lỗi khi truy vấn
                 });
     }
+
     public void updateCartItem(String userId, String productId, int quantity) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("quantity", quantity);

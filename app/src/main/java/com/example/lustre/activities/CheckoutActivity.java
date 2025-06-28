@@ -180,6 +180,8 @@ public class CheckoutActivity extends AppCompatActivity {
         firestore.collection("orders")
                 .add(order)
                 .addOnSuccessListener(documentReference -> {
+                    updateCartAfterOrder(userId, selectedItems);
+
                     if (voucherCode != null && !voucherCode.isEmpty()) {
                         String usageId = voucherCode + "_" + userId;
                         firestore.collection("voucher_usages")
@@ -187,6 +189,8 @@ public class CheckoutActivity extends AppCompatActivity {
                                 .set(new VoucherUsage(userId, voucherCode))
                                 .addOnSuccessListener(ref -> {
                                     Toast.makeText(this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(CheckoutActivity.this, MyOrderActivity.class);
+                                    startActivity(intent);
                                     finish();
                                 })
                                 .addOnFailureListener(e -> {
@@ -195,6 +199,8 @@ public class CheckoutActivity extends AppCompatActivity {
                                 });
                     } else {
                         Toast.makeText(this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(CheckoutActivity.this, MyOrderActivity.class);
+                        startActivity(intent);
                         finish();
                     }
                 })
@@ -202,6 +208,7 @@ public class CheckoutActivity extends AppCompatActivity {
                     Toast.makeText(this, "Lỗi khi đặt hàng", Toast.LENGTH_SHORT).show();
                 });
     }
+
 
     private void fetchDefaultAddress() {
         SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
@@ -225,4 +232,31 @@ public class CheckoutActivity extends AppCompatActivity {
                     txtShippingAddress.setText("Không thể lấy địa chỉ");
                 });
     }
+
+    private void updateCartAfterOrder(String userId, List<CartDisplayItem> orderedItems) {
+        for (CartDisplayItem item : orderedItems) {
+            firestore.collection("users")
+                    .document(userId)
+                    .collection("cart")
+                    .whereEqualTo("productId", item.getProduct().getId())
+                    .whereEqualTo("size", item.getSize())
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        if (!querySnapshot.isEmpty()) {
+                            var doc = querySnapshot.getDocuments().get(0);
+                            Long currentQuantity = doc.getLong("quantity");
+
+                            if (currentQuantity != null) {
+                                int remaining = currentQuantity.intValue() - item.getQuantity();
+                                if (remaining > 0) {
+                                    doc.getReference().update("quantity", remaining);
+                                } else {
+                                    doc.getReference().delete();
+                                }
+                            }
+                        }
+                    });
+        }
+    }
+
 }
