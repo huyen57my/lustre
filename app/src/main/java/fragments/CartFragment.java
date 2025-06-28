@@ -57,8 +57,6 @@ public class CartFragment extends Fragment {
     private Voucher appliedVoucher = null;
     private ArrayList<CartDisplayItem> cartItems = new ArrayList<>();
 
-    private double totalPrice;
-
     public CartFragment() {}
 
     @Nullable
