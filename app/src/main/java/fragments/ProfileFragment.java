@@ -83,7 +83,6 @@ public class ProfileFragment extends Fragment {
                         Log.d("DEBUG_AVATAR", "Original URL: " + avatarUrl);
 
                         if (avatarUrl != null && !avatarUrl.trim().isEmpty()) {
-                            // Chuyển HTTP thành HTTPS
                             if (avatarUrl.startsWith("http://")) {
                                 avatarUrl = avatarUrl.replace("http://", "https://");
                                 Log.d("DEBUG_AVATAR", "Converted to HTTPS: " + avatarUrl);

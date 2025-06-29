@@ -3,14 +3,18 @@ package com.example.lustre.activities;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -20,6 +24,13 @@ import androidx.core.widget.ImageViewCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.lustre.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import adapter.TabFragmentAdapter;
 
@@ -41,6 +52,22 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("DEBUG_FCM", "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        String token = task.getResult();
+                        Log.d("DEBUG_FCM", "FCM Registration Token: " + token);
+
+                        sendTokenToServer(token);
+                    }
+                });
 
         loadComponent();
 
@@ -66,6 +93,24 @@ public class MainActivity extends AppCompatActivity {
         });
 
         selectTab(tabHome);
+    }
+
+
+    private void sendTokenToServer(String token) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String userId =  prefs.getString("user_id", null);
+
+        if (userId != null) {
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("fcmToken", token);
+            updates.put("tokenUpdatedAt", System.currentTimeMillis());
+
+            db.collection("users").document(userId)
+                    .update(updates)
+                    .addOnSuccessListener(aVoid -> Log.d("DEBUG_SENDTOKEN", "Token sent to server"))
+                    .addOnFailureListener(e -> Log.w("DEBUG_SENDTOKEN", "Error sending token", e));
+        }
     }
 
     private void loadComponent() {
