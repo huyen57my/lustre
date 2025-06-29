@@ -26,8 +26,6 @@ public class SignInActivity extends AppCompatActivity {
 
     EditText edtEmail;
     EditText edtPassword;
-    RadioButton radioAgree;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +53,6 @@ public class SignInActivity extends AppCompatActivity {
                 return;
             }
 
-            if (!radioAgree.isChecked()) {
-                Toast.makeText(SignInActivity.this, "Vui lòng đồng ý với điều khoản", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
             AuthRepository authRepo = new AuthRepository();
             authRepo.login(email, password, new AuthRepository.AuthCallback() {
                 @Override
@@ -71,8 +64,11 @@ public class SignInActivity extends AppCompatActivity {
                             .apply();
 
                     Toast.makeText(SignInActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(SignInActivity.this, MainActivity.class));
-                    finish();
+
+                    new android.os.Handler().postDelayed(() -> {
+                        startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                        finish();
+                    }, 300);
                 }
 
                 @Override
@@ -88,7 +84,6 @@ public class SignInActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.sign_in_btnLogin);
         edtEmail = findViewById(R.id.sign_in_txtEmail);
         edtPassword = findViewById(R.id.sign_in_txtPassword);
-        radioAgree = findViewById(R.id.radio_agree);
     }
 
 }

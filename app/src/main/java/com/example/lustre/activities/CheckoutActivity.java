@@ -3,6 +3,7 @@ package com.example.lustre.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lustre.R;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -110,58 +112,7 @@ public class CheckoutActivity extends AppCompatActivity {
         });
 
         btnContinue.setOnClickListener(v -> {
-            SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-            String userId = prefs.getString("user_id", null);
-            if (userId == null) return;
-
-            String address = txtShippingAddress.getText().toString();
-            long createdAt = System.currentTimeMillis();
-
-            Order order = new Order(
-                    null,
-                    userId,
-                    selectedItems,
-                    totalAmount,
-                    discountAmount,
-                    finalAmount,
-                    voucherCode,
-                    OrderStatus.ORDER_PLACED,
-                    address,
-                    createdAt
-            );
-
-            firestore.collection("orders")
-                    .add(order)
-                    .addOnSuccessListener(documentReference -> {
-                        String orderId = documentReference.getId();
-                        documentReference.update("id", orderId);
-                        order.setId(orderId);
-
-                        updateCartAfterOrder(userId, selectedItems);
-
-                        if (voucherCode != null && !voucherCode.isEmpty()) {
-                            String usageId = voucherCode + "_" + userId;
-                            firestore.collection("voucher_usages")
-                                    .document(usageId)
-                                    .set(new VoucherUsage(userId, voucherCode))
-                                    .addOnSuccessListener(ref -> {
-                                        Toast.makeText(this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(CheckoutActivity.this, MyOrderActivity.class));
-                                        finish();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(this, "Đặt hàng thành công nhưng không lưu được voucher", Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    });
-                        } else {
-                            Toast.makeText(this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(CheckoutActivity.this, MyOrderActivity.class));
-                            finish();
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Lỗi khi đặt hàng", Toast.LENGTH_SHORT).show();
-                    });
+            showPaymentMethodBottomSheet();
         });
 
         btnBack.setOnClickListener(v -> finish());
@@ -174,8 +125,7 @@ public class CheckoutActivity extends AppCompatActivity {
             String typeName = data.getStringExtra("selectedShipping");
             selectedShippingType = ShippingType.valueOf(typeName);
 
-            // Nếu không dùng freeship thì cập nhật lại shipping
-            if (!"free_shipping".equals(discountType)) {
+            if (!"freeship".equals(discountType)) {
                 updateShippingType();
                 finalAmount = totalAmount - discountAmount + shippingFee;
             } else {
@@ -289,5 +239,82 @@ public class CheckoutActivity extends AppCompatActivity {
                     });
         }
     }
+
+    private void placeOrder(String paymentMethod) {
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        String userId = prefs.getString("user_id", null);
+        if (userId == null) return;
+
+        String address = txtShippingAddress.getText().toString();
+        long createdAt = System.currentTimeMillis();
+
+        Order order = new Order(
+                null,
+                userId,
+                selectedItems,
+                totalAmount,
+                discountAmount,
+                finalAmount,
+                voucherCode,
+                OrderStatus.ORDER_PLACED,
+                address,
+                createdAt
+        );
+
+        firestore.collection("orders")
+                .add(order)
+                .addOnSuccessListener(documentReference -> {
+                    String orderId = documentReference.getId();
+                    documentReference.update("id", orderId);
+                    order.setId(orderId);
+
+                    updateCartAfterOrder(userId, selectedItems);
+
+                    if (voucherCode != null && !voucherCode.isEmpty()) {
+                        String usageId = voucherCode + "_" + userId;
+                        firestore.collection("voucher_usages")
+                                .document(usageId)
+                                .set(new VoucherUsage(userId, voucherCode))
+                                .addOnSuccessListener(ref -> {
+                                    Toast.makeText(this, "Đặt hàng thành công (" + paymentMethod + ")", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(this, MyOrderActivity.class));
+                                    finish();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Đặt hàng thành công nhưng không lưu được voucher", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                });
+                    } else {
+                        Toast.makeText(this, "Đặt hàng thành công (" + paymentMethod + ")", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(this, MyOrderActivity.class));
+                        finish();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Lỗi khi đặt hàng", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void showPaymentMethodBottomSheet() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        View view = getLayoutInflater().inflate(R.layout.bottom_sheet_payment_method, null);
+        bottomSheetDialog.setContentView(view);
+
+        Button btnCOD = view.findViewById(R.id.btnCOD);
+        Button btnMoMo = view.findViewById(R.id.btnMoMo);
+
+        btnCOD.setOnClickListener(v -> {
+            bottomSheetDialog.dismiss();
+            placeOrder("COD");
+        });
+
+        btnMoMo.setOnClickListener(v -> {
+            bottomSheetDialog.dismiss();
+            placeOrder("MOMO");
+        });
+
+        bottomSheetDialog.show();
+    }
+
 
 }

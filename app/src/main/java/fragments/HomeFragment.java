@@ -142,9 +142,11 @@ public class HomeFragment extends Fragment implements ProductAdapter.OnProductCl
         TabLayout tabLayout = view.findViewById(R.id.tabLayout);
 
         List<String> imageUrls = Arrays.asList(
-                "https://i-giaitri.vnecdn.net/2025/05/20/doramon-1747738160.jpg",
-                "https://i-giaitri.vnecdn.net/2025/05/20/doramon-1747738183.jpg",
-                "https://i-giaitri.vnecdn.net/2025/05/20/doramon-1747739217.jpg"
+                "https://theme.hstatic.net/1000324561/1001250011/14/slide_2_mb.jpg?v=1340",
+                "https://theme.hstatic.net/1000324561/1001250011/14/slide_3_mb.jpg?v=1340",
+                "https://theme.hstatic.net/1000324561/1001250011/14/slide_4_mb.jpg?v=1340",
+                "https://theme.hstatic.net/1000324561/1001250011/14/slide_4_mb.jpg?v=1340",
+                "https://theme.hstatic.net/1000324561/1001250011/14/slide_4_mb.jpg?v=1340"
         );
 
         BannerApdater adapter = new BannerApdater(requireContext(), imageUrls);
