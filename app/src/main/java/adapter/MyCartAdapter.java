@@ -77,7 +77,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.MyViewHold
 
         holder.txtName.setText(product.getName());
         holder.txtSize.setText("Size: " + item.getSize());
-        if (product.getSale() > 0) {
+        if (product.getSale() != null && product.getSale() > 0 ) {
             holder.txtPrice.setText(formatVND(product.getSale()));
         } else {
             holder.txtPrice.setText(formatVND(product.getPrice()));
