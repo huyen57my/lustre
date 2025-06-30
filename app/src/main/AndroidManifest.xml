@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -19,55 +18,88 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Lustre"
         tools:targetApi="31">
-
+        <activity
+            android:name=".activities.ForgotPasswordActivity"
+            android:exported="false" />
         <!-- Glide config -->
         <meta-data
             android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
-            android:value="false" />
-
-        <!-- Firebase messaging service -->
+            android:value="false" /> <!-- Firebase messaging service -->
         <service
             android:name="firebase.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
-
-        <!-- App Activities -->
-        <activity android:name=".activities.OtpVerificationActivity" android:exported="false" />
-        <activity android:name=".activities.OrderDetailActivity" android:exported="false" />
-        <activity android:name=".activities.MyOrderActivity" android:exported="false" />
-        <activity android:name=".activities.ChooseAddressActivity" android:exported="false" />
-        <activity android:name=".activities.ChooseShippingActivity" android:exported="false" />
-        <activity android:name=".activities.ProductDetailActivity" android:exported="false" />
-        <activity android:name=".activities.CheckoutActivity" android:exported="false" />
-        <activity android:name=".activities.SearchActivity"
+        </service> <!-- App Activities -->
+        <activity
+            android:name=".activities.OtpVerificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.OrderDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.MyOrderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ChooseAddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ChooseShippingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ProductDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.CheckoutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SearchActivity"
             android:exported="false"
             android:launchMode="standard"
             android:windowSoftInputMode="adjustResize|stateVisible" />
-        <activity android:name=".activities.CreateProfileActivity" android:exported="false" />
-        <activity android:name=".activities.SignUpActivity" android:exported="false" />
-        <activity android:name=".activities.SignInActivity" android:exported="false" />
-        <activity android:name=".activities.WelcomeActivity" android:exported="false" />
-        <activity android:name=".activities.PaymentMethodActivity" android:exported="false" />
-        <activity android:name=".activities.HelpCenterActivity" android:exported="false" />
-        <activity android:name=".activities.SettingsActivity" android:exported="false" />
-        <activity android:name=".activities.PrivacyPolicyActivity" android:exported="false" />
-        <activity android:name=".activities.PasswordManagerActivity" android:exported="false" />
-        <activity android:name=".activities.FilterActivity" android:exported="false" />
-
-        <!-- Launcher Activity -->
+        <activity
+            android:name=".activities.CreateProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SignInActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.WelcomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.PaymentMethodActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.HelpCenterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.PrivacyPolicyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.PasswordManagerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.FilterActivity"
+            android:exported="false" /> <!-- Launcher Activity -->
         <activity
             android:name=".activities.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".activities.MainActivity" android:exported="false" />
+        <activity
+            android:name=".activities.MainActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

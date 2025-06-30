@@ -22,13 +22,14 @@ public class OtpVerificationActivity extends AppCompatActivity {
     private OtpService otpService;
     private CountDownTimer resendTimer;
     private boolean canResend = false;
+    private String type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp_verification);
 
-        // Nhận thông tin từ Intent
+         type = getIntent().getStringExtra("type");
         email = getIntent().getStringExtra("email");
         name = getIntent().getStringExtra("name");
         id = getIntent().getStringExtra("id");
@@ -104,8 +105,18 @@ public class OtpVerificationActivity extends AppCompatActivity {
         otpService.verifyOtp(email, code, new OtpService.OtpCallback() {
             @Override
             public void onSent(String message) {
+
+                Intent intent;
+
+                if ("sign_up".equals(type)) {
+                    intent = new Intent(OtpVerificationActivity.this, CreateProfileActivity.class);
+                } else if ("forgot_password".equals(type)) {
+                    intent = new Intent(OtpVerificationActivity.this, ForgotPasswordActivity.class);
+                } else {
+                    Toast.makeText(OtpVerificationActivity.this, "Unknown flow", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Toast.makeText(OtpVerificationActivity.this, "OTP verified", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(OtpVerificationActivity.this, CreateProfileActivity.class);
                 intent.putExtra("email", email);
                 intent.putExtra("name", name);
                 intent.putExtra("id", id);
