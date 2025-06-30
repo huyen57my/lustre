@@ -100,13 +100,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/edittext_rounded_border"
-                    android:hint="Password"
                     android:inputType="textPassword"
                     android:padding="12dp"
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray" />
             </com.google.android.material.textfield.TextInputLayout>
-
         </LinearLayout>
 
         <Button

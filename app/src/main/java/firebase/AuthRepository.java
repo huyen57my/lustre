@@ -76,17 +76,7 @@ public class AuthRepository {
                 .document(user.getId())
                 .set(user)
                 .addOnSuccessListener(aVoid -> {
-                    otpService.sendOtp(user.getEmail(), otp, new OtpService.OtpCallback() {
-                        @Override
-                        public void onSent(String message) {
-                            callback.onSuccess(user);
-                        }
-
-                        @Override
-                        public void onFailed(String error) {
-                            callback.onFailure("Tạo tài khoản thành công nhưng gửi OTP thất bại: " + error);
-                        }
-                    });
+                    callback.onSuccess(user);
                 })
                 .addOnFailureListener(e -> callback.onFailure("Lỗi tạo tài khoản: " + e.getMessage()));
     }

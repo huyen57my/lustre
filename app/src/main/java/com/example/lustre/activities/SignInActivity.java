@@ -57,7 +57,6 @@ public class SignInActivity extends AppCompatActivity {
             authRepo.login(email, password, new AuthRepository.AuthCallback() {
                 @Override
                 public void onSuccess(User user) {
-                    // Lưu user_id vào SharedPreferences
                     getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
                             .edit()
                             .putString("user_id", user.getId())

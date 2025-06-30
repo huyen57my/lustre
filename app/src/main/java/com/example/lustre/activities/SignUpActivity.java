@@ -53,16 +53,12 @@ public class SignUpActivity extends AppCompatActivity {
             String name = edtUsername.getText().toString().trim();
             String password = edtPassword.getText().toString().trim();
 
-            // Validate đơn giản
             if (email.isEmpty() || name.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Tạo ID random
             String userId = db.collection("users").document().getId();
-
-            // Tạo user
             User user = new User();
             user.setId(userId);
             user.setEmail(email);
@@ -79,8 +75,8 @@ public class SignUpActivity extends AppCompatActivity {
                 public void onSuccess(User user) {
                     runOnUiThread(() -> {
                         Toast.makeText(SignUpActivity.this, "Đăng ký thành công! Vui lòng kiểm tra email để nhận OTP.", Toast.LENGTH_SHORT).show();
-
                         Intent intent = new Intent(SignUpActivity.this, OtpVerificationActivity.class);
+                        intent.putExtra("type", "sign_up");
                         intent.putExtra("email", user.getEmail());
                         intent.putExtra("name", user.getName());
                         intent.putExtra("id", user.getId());
@@ -92,8 +88,6 @@ public class SignUpActivity extends AppCompatActivity {
                         finish();
                     });
                 }
-
-
                 @Override
                 public void onFailure(String errorMessage) {
                     runOnUiThread(() -> {

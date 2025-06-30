@@ -18,7 +18,7 @@ public class OtpService {
     }
 
     private static final String TAG = "OtpService";
-    private static final String API_KEY = "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";
+    private static final String API_KEY = "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";
     private static final String FROM_EMAIL = "mynvh22411c@st.uel.edu.vn";
 
     public void sendOtpToEmail(String email, String otp) {
@@ -124,16 +124,40 @@ public class OtpService {
     }
     public void sendOtp(String email, OtpCallback callback) {
         String otp = generateOtpCode();
-        sendOtp(email, otp, new OtpCallback() {
-            @Override
-            public void onSent(String message) {
-                callback.onSent(message);
-            }
 
-            @Override
-            public void onFailed(String error) {
-                callback.onFailed(error);
-            }
-        });
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users")
+                .whereEqualTo("email", email)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        // Lấy document đầu tiên
+                        db.collection("users")
+                                .document(querySnapshot.getDocuments().get(0).getId())
+                                .update("otpCode", otp)
+                                .addOnSuccessListener(aVoid -> {
+                                    sendOtp(email, otp, new OtpCallback() {
+                                        @Override
+                                        public void onSent(String message) {
+                                            callback.onSent(message);
+                                        }
+
+                                        @Override
+                                        public void onFailed(String error) {
+                                            callback.onFailed(error);
+                                        }
+                                    });
+                                })
+                                .addOnFailureListener(e -> {
+                                    callback.onFailed("Không thể lưu OTP: " + e.getMessage());
+                                });
+                    } else {
+                        callback.onFailed("Không tìm thấy người dùng với email này");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    callback.onFailed("Lỗi truy vấn Firestore: " + e.getMessage());
+                });
     }
+
 }
